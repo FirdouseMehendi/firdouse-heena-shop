@@ -32,8 +32,11 @@ export async function onRequestPost({ request, env }) {
   const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } = env;
   if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
     return json(
-      { error: "Payments are not configured yet. Please try again later." },
-      500
+      {
+        error:
+          "Preview mode: the shop works, but online payments switch on once your Razorpay keys are added (see README, steps 3 & 6).",
+      },
+      503
     );
   }
 
