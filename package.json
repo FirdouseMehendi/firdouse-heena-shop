@@ -1,0 +1,17 @@
+{
+  "name": "firdouse-heena-shop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Free online henna store for Firdouse Heena — static site + Cloudflare Pages Functions + Razorpay.",
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "deploy": "wrangler pages deploy public",
+    "images": "node scripts/optimize-images.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.33.5"
+  }
+}

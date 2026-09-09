@@ -1,0 +1,6 @@
+# Copy this file to ".dev.vars" (no extension change) for local testing with:
+#   npx wrangler pages dev public
+# Use your Razorpay TEST MODE keys here. Never commit the real .dev.vars file.
+
+RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxxxx
+RAZORPAY_KEY_SECRET=xxxxxxxxxxxxxxxxxxxxxxxx

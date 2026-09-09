@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 420" role="img" aria-label="Henna designs">
+<rect width="520" height="420" fill="#faf6f3"/>
+<g fill="none" stroke="#7c2438" stroke-width="3" opacity="0.9">
+<path d="M110 300c40-30 40-90 0-140 60 20 120 20 150-30-10 70 20 130 90 150-70 10-130 50-150 110-20-60-80-100-90-90z"/>
+<circle cx="260" cy="210" r="16"/>
+<path d="M360 90c30 10 44 40 30 66"/>
+<path d="M150 120c-20 24-18 54 6 74"/>
+</g>
+<g fill="#b8863b"><circle cx="260" cy="210" r="6"/><circle cx="120" cy="300" r="5"/><circle cx="400" cy="300" r="5"/><circle cx="260" cy="70" r="5"/></g>
+<text x="260" y="400" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="18" fill="#6b6360">Firdouse Heena</text>
+</svg>

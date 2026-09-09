@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://firdouseheena.pages.dev/sitemap.xml

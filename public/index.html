@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Firdouse Heena — Natural henna &amp; artist essentials</title>
+<meta name="description" content="Chemical-free henna cones, powders, aftercare and artist supplies. Shipped across India. Secure card &amp; UPI checkout." />
+<link rel="canonical" href="https://firdouseheena.pages.dev/" />
+<meta property="og:title" content="Firdouse Heena — Natural henna &amp; artist essentials" />
+<meta property="og:description" content="Chemical-free henna cones, powders, aftercare and artist supplies. Shipped across India." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://firdouseheena.pages.dev/" />
+<meta property="og:image" content="https://firdouseheena.pages.dev/images/brand/hero.svg" />
+<meta name="theme-color" content="#7c2438" />
+<link rel="icon" href="images/brand/favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="assets/styles.css" />
+<script defer src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script defer src="assets/app.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#shop">Skip to products</a>
+
+<div class="offerbar" id="offerbar" role="status"></div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <img src="images/brand/logo.svg" alt="" width="34" height="34" />
+      <span data-site="brand">Firdouse Heena</span>
+    </a>
+
+    <form class="search" role="search" id="searchForm">
+      <label class="visually-hidden" for="searchInput">Search products</label>
+      <input id="searchInput" type="search" placeholder="Search henna, cones, oils…" autocomplete="off" />
+    </form>
+
+    <button class="cart-btn" id="cartOpen" type="button" aria-haspopup="dialog">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4h-2l-1 2H2v2h2l3.6 7.59-1.35 2.44A2 2 0 0 0 8 21h11v-2H8.42a.25.25 0 0 1-.22-.37L9 17h7.45a2 2 0 0 0 1.8-1.11l3.24-6.48A1 1 0 0 0 21.6 8H6.21l-.94-2H7Zm0 15a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 19Zm10 0a2 2 0 1 0 .001 4.001A2 2 0 0 0 17 19Z"/></svg>
+      Cart <span class="cart-count" id="cartCount" aria-label="items in cart">0</span>
+    </button>
+  </div>
+  <nav class="catnav" aria-label="Product categories">
+    <div class="wrap catnav-inner" id="catnav"></div>
+  </nav>
+</header>
+
+<main>
+  <section class="hero wrap" aria-labelledby="heroHeading">
+    <div class="hero-text">
+      <h1 id="heroHeading" data-site="hero.heading">Happy shopping with Firdouse Heena</h1>
+      <p data-site="hero.sub"></p>
+      <a class="btn btn-primary" href="#shop">Shop all products</a>
+      <a class="btn btn-ghost" data-site="instagram" href="#" target="_blank" rel="noopener">Follow @firdouseheena</a>
+    </div>
+    <div class="hero-media">
+      <img data-site="hero.image" src="images/brand/hero.svg" alt="Henna designs on hands" width="520" height="420" />
+    </div>
+  </section>
+
+  <section id="shop" class="wrap shop" aria-labelledby="shopHeading" tabindex="-1">
+    <div class="shop-head">
+      <h2 id="shopHeading">Shop</h2>
+      <div class="filter-chips" id="filterChips" role="tablist" aria-label="Filter by category"></div>
+    </div>
+    <p class="result-note" id="resultNote" aria-live="polite"></p>
+    <div class="grid" id="grid"></div>
+    <p class="empty" id="emptyState" hidden>No products match that search.</p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div>
+      <strong data-site="brand">Firdouse Heena</strong>
+      <p data-site="tagline"></p>
+      <p class="muted"><a data-site="instagram" href="#" target="_blank" rel="noopener">Instagram</a></p>
+    </div>
+    <nav aria-label="Information">
+      <a href="/about">About us</a>
+      <a href="/contact">Contact us</a>
+      <a href="/shipping">Shipping policy</a>
+      <a href="/refund">Cancellation &amp; refunds</a>
+      <a href="/terms">Terms &amp; conditions</a>
+      <a href="/privacy">Privacy policy</a>
+    </nav>
+    <p class="muted small">Secure payments by Razorpay · UPI, cards, netbanking &amp; wallets.<br />© <span id="year"></span> <span data-site="brand">Firdouse Heena</span>. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Product quick view -->
+<dialog id="productDialog" class="dialog product-dialog" aria-label="Product details">
+  <button class="dialog-close" data-close type="button" aria-label="Close">&times;</button>
+  <div class="pd-body" id="pdBody"></div>
+</dialog>
+
+<!-- Cart drawer -->
+<div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+<aside class="drawer" id="cartDrawer" aria-hidden="true" aria-label="Shopping cart" role="dialog">
+  <div class="drawer-head">
+    <h2>Your cart</h2>
+    <button class="dialog-close" id="cartClose" type="button" aria-label="Close cart">&times;</button>
+  </div>
+  <div class="drawer-body" id="cartItems"></div>
+  <div class="drawer-foot">
+    <div class="totrow"><span>Subtotal</span><span id="cartSubtotal">₹0</span></div>
+    <p class="muted small" id="shipNote"></p>
+    <button class="btn btn-primary block" id="checkoutBtn" type="button" disabled>Checkout</button>
+  </div>
+</aside>
+
+<!-- Checkout -->
+<dialog id="checkoutDialog" class="dialog checkout-dialog" aria-label="Checkout">
+  <button class="dialog-close" data-close type="button" aria-label="Close">&times;</button>
+  <h2>Checkout</h2>
+  <form id="checkoutForm" novalidate>
+    <div class="field"><label for="cf-name">Full name</label><input id="cf-name" name="name" required autocomplete="name" /></div>
+    <div class="row">
+      <div class="field"><label for="cf-phone">Phone</label><input id="cf-phone" name="phone" required inputmode="tel" autocomplete="tel" pattern="[0-9+ -]{8,15}" /></div>
+      <div class="field"><label for="cf-email">Email</label><input id="cf-email" name="email" type="email" required autocomplete="email" /></div>
+    </div>
+    <div class="field"><label for="cf-address">Address</label><textarea id="cf-address" name="address" rows="2" required autocomplete="street-address"></textarea></div>
+    <div class="row">
+      <div class="field"><label for="cf-city">City</label><input id="cf-city" name="city" required autocomplete="address-level2" /></div>
+      <div class="field"><label for="cf-state">State</label><input id="cf-state" name="state" required autocomplete="address-level1" /></div>
+      <div class="field"><label for="cf-pincode">PIN code</label><input id="cf-pincode" name="pincode" required inputmode="numeric" pattern="[0-9]{6}" autocomplete="postal-code" /></div>
+    </div>
+    <div class="field"><label for="cf-notes">Order notes <span class="muted">(optional)</span></label><textarea id="cf-notes" name="notes" rows="2"></textarea></div>
+
+    <div class="co-summary" id="coSummary"></div>
+    <p class="form-error" id="checkoutError" role="alert" hidden></p>
+    <button class="btn btn-primary block" id="payBtn" type="submit">Pay securely</button>
+    <p class="muted small center">You'll be redirected to Razorpay's secure payment window.</p>
+  </form>
+</dialog>
+
+<!-- Confirmation -->
+<dialog id="successDialog" class="dialog success-dialog" aria-label="Order confirmed">
+  <div class="success-mark" aria-hidden="true">&checkmark;</div>
+  <h2>Thank you! Your order is confirmed.</h2>
+  <p>We've recorded your order and will dispatch it soon. A payment receipt has been sent by Razorpay.</p>
+  <p class="muted small">Payment ID: <span id="successPaymentId"></span></p>
+  <button class="btn btn-primary" data-close type="button">Continue shopping</button>
+</dialog>
+
+</body>
+</html>

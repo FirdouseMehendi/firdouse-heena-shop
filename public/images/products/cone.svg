@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Henna Cones">
+<rect width="400" height="400" fill="#faf6f3"/>
+<g fill="none" stroke="#7c2438" stroke-width="4" opacity="0.85">
+<path d="M200 70c40 20 54 66 30 104-16 26-30 40-30 66 0-26-14-40-30-66-24-38-10-84 30-104z"/>
+<circle cx="200" cy="150" r="14"/>
+<path d="M120 250c30 10 44 40 34 70M280 250c-30 10-44 40-34 70"/>
+</g>
+<circle cx="200" cy="150" r="6" fill="#b8863b"/>
+<rect x="40" y="330" width="320" height="40" rx="8" fill="#ffffff"/>
+<text x="200" y="356" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="20" fill="#7c2438">Henna Cones</text>
+</svg>
