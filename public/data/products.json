@@ -1,90 +1,30 @@
 [
   {
-    "id": "rose-bridal-cone-12",
-    "title": "Rose Bridal Henna Cones (Pack of 12)",
-    "category": "Bride & Cone Essentials",
-    "price": 249,
-    "mrp": 349,
-    "stock": 40,
-    "badges": ["Sale", "Bestseller"],
-    "images": ["images/products/cone.svg"],
-    "description": "Hand-rolled, chemical-free henna paste with a fine tip for bridal detailing. Deep maroon stain that matures over 24–48 hours. Sealed pack of 12 cones, freshly made to order."
+    "id": "bridal-henna-powder",
+    "title": "Bridal Henna Powder (7-Filter Sifted)",
+    "category": "Henna Powder & Oils",
+    "unit": "g",
+    "ratePerUnit": 0.5,
+    "sizes": [100, 250, 500, 1000],
+    "defaultSize": 250,
+    "stockUnits": 20000,
+    "packagingGrams": 40,
+    "badges": ["Bestseller"],
+    "images": ["images/products/powder-studio.jpg", "images/products/powder-cones-real.jpg"],
+    "description": "Bridal-grade henna, passed through seven filters to an ultra-fine sift - smooth, clog-free paste and a deep maroon bridal stain. Natural dye content only, no PPD, no additives. Pick your pack size below; priced by weight."
   },
   {
-    "id": "organic-henna-powder-100g",
-    "title": "Triple-Sifted Organic Henna Powder (100g)",
+    "id": "bridal-henna-oil",
+    "title": "Bridal Henna Oil (Stain Darkening)",
     "category": "Henna Powder & Oils",
-    "price": 180,
-    "mrp": 220,
-    "stock": 60,
-    "badges": ["Sale"],
-    "images": ["images/products/powder.svg"],
-    "description": "Rajasthani crop, triple-sifted to 300 mesh for a smooth, clog-free paste. Natural dye content, no PPD, no additives. Resealable pouch, 100g."
-  },
-  {
-    "id": "eucalyptus-essential-oil-15ml",
-    "title": "Eucalyptus Essential Oil for Henna (15ml)",
-    "category": "Henna Powder & Oils",
-    "price": 160,
-    "mrp": 160,
-    "stock": 35,
+    "unit": "ml",
+    "ratePerUnit": 1.5,
+    "sizes": [100, 250, 500, 1000],
+    "defaultSize": 250,
+    "stockUnits": 10000,
+    "packagingGrams": 120,
     "badges": [],
-    "images": ["images/products/oil.svg"],
-    "description": "Steam-distilled eucalyptus oil with high cineole content to deepen and speed up henna stain. Dropper cap, 15ml."
-  },
-  {
-    "id": "cone-filling-kit",
-    "title": "Cone Filling Kit — Bottle, Nozzles & Stand",
-    "category": "Artist Essentials",
-    "price": 320,
-    "mrp": 420,
-    "stock": 18,
-    "badges": ["Sale"],
-    "images": ["images/products/kit.svg"],
-    "description": "Everything to roll your own cones: applicator bottle, 5 metal nozzles in assorted gauges, cone stand and 50 pre-cut cellophane sheets."
-  },
-  {
-    "id": "aftercare-balm-25g",
-    "title": "Henna Aftercare Balm (25g)",
-    "category": "Aftercare",
-    "price": 140,
-    "mrp": 140,
-    "stock": 50,
-    "badges": ["New"],
-    "images": ["images/products/balm.svg"],
-    "description": "Beeswax and shea balm to seal a dry henna design, lock in moisture and darken the final stain. Fragrance-free, 25g tin."
-  },
-  {
-    "id": "practice-hand-silicone",
-    "title": "Silicone Practice Hand — Life Size",
-    "category": "Practice Essentials",
-    "price": 650,
-    "mrp": 850,
-    "stock": 12,
-    "badges": ["Sale"],
-    "images": ["images/products/hand.svg"],
-    "description": "Skin-tone silicone hand with realistic flex and texture for practising bridal patterns. Wipes clean, reusable for years."
-  },
-  {
-    "id": "diy-mehndi-kit-mini",
-    "title": "DIY Mehndi Kit — Mini",
-    "category": "DIY Kits",
-    "price": 99,
-    "mrp": 149,
-    "stock": 80,
-    "badges": ["Sale"],
-    "images": ["images/products/diykit.svg"],
-    "description": "Two ready-to-use henna cones, a design card and aftercare sachet. Perfect for festivals and first-timers."
-  },
-  {
-    "id": "jagua-gel-20ml",
-    "title": "Jagua Temporary Tattoo Gel (20ml)",
-    "category": "Henna Powder & Oils",
-    "price": 420,
-    "mrp": 480,
-    "stock": 15,
-    "badges": [],
-    "images": ["images/products/jagua.svg"],
-    "description": "Fruit-based jagua gel that stains blue-black for a fresh-ink look. Vegan, PPD-free. Applicator bottle, 20ml."
+    "images": ["images/products/oil-studio.jpg", "images/products/oil-bottle-real.jpg"],
+    "description": "Stain-darkening terping oil blend - high-cineole essential oils in a skin-safe base. Apply to skin before henna, or mix a few drops into the paste. Pick your bottle size below; priced by volume."
   }
 ]

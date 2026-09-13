@@ -60,24 +60,26 @@ export async function onRequestPost({ request, env }) {
   for (const item of items) {
     const product = byId.get(item?.id);
     const qty = Math.floor(Number(item?.qty));
+    const size = Math.floor(Number(item?.size));
     if (!product) {
       return json({ error: `Product "${clean(item?.id, 60)}" is no longer available.` }, 400);
     }
     if (!Number.isFinite(qty) || qty < 1 || qty > 99) {
       return json({ error: `Invalid quantity for "${product.title}".` }, 400);
     }
-    if (typeof product.stock === "number" && qty > product.stock) {
-      return json({ error: `Only ${product.stock} left of "${product.title}".` }, 400);
+    if (!Array.isArray(product.sizes) || !product.sizes.includes(size)) {
+      return json({ error: `Invalid pack size for "${product.title}".` }, 400);
     }
-    amountPaise += Math.round(product.price * 100) * qty;
-    lines.push(`${qty}x ${product.title}`);
+    if (typeof product.stockUnits === "number" && size * qty > product.stockUnits) {
+      return json({ error: `Not enough stock for "${product.title}".` }, 400);
+    }
+    amountPaise += Math.round(Number(product.ratePerUnit) * size * 100) * qty;
+    lines.push(`${qty}x ${product.title} (${size}${product.unit})`);
   }
 
   // --- Shipping ------------------------------------------------------------------
-  const subtotalRupees = amountPaise / 100;
-  const freeAbove = Number(site?.shipping?.freeAbove ?? 0);
-  const flatRate = Number(site?.shipping?.flatRate ?? 0);
-  const shippingRupees = freeAbove && subtotalRupees >= freeAbove ? 0 : flatRate;
+  // Flat rate on every order. Prepaid only, no free-shipping threshold, no COD.
+  const shippingRupees = Number(site?.shipping?.flatRate ?? 0);
   amountPaise += Math.round(shippingRupees * 100);
 
   if (amountPaise < 100) {

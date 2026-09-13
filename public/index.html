@@ -10,9 +10,10 @@
 <meta property="og:description" content="Chemical-free henna cones, powders, aftercare and artist supplies. Shipped across India." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://firdouseheena.pages.dev/" />
-<meta property="og:image" content="https://firdouseheena.pages.dev/images/brand/hero.svg" />
-<meta name="theme-color" content="#7c2438" />
-<link rel="icon" href="images/brand/favicon.svg" type="image/svg+xml" />
+<meta property="og:image" content="https://firdouseheena.pages.dev/images/brand/logo-full.jpg" />
+<meta name="theme-color" content="#1a2d11" />
+<link rel="icon" href="images/brand/favicon.png" type="image/png" />
+<link rel="apple-touch-icon" href="images/brand/apple-touch-icon.png" />
 <link rel="stylesheet" href="assets/styles.css" />
 <script defer src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script defer src="assets/app.js"></script>
@@ -25,23 +26,43 @@
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="brand" href="/">
-      <img src="images/brand/logo.svg" alt="" width="34" height="34" />
-      <span data-site="brand">Firdouse Heena</span>
+      <img class="logo-badge" src="images/brand/logo.png" alt="" width="52" height="52" />
+      <span class="brand-text">
+        <span data-site="brand">Firdouse Heena</span>
+        <small>Henna Artistry</small>
+      </span>
     </a>
 
-    <form class="search" role="search" id="searchForm">
-      <label class="visually-hidden" for="searchInput">Search products</label>
-      <input id="searchInput" type="search" placeholder="Search henna, cones, oils…" autocomplete="off" />
-    </form>
+    <nav class="main-nav" aria-label="Main">
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="#services">Services</a>
+      <a href="#shop">Shop</a>
+      <a href="#work">Gallery</a>
+      <a href="#tips">Blog</a>
+      <a href="/contact">Contact</a>
+    </nav>
 
-    <button class="cart-btn" id="cartOpen" type="button" aria-haspopup="dialog">
-      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4h-2l-1 2H2v2h2l3.6 7.59-1.35 2.44A2 2 0 0 0 8 21h11v-2H8.42a.25.25 0 0 1-.22-.37L9 17h7.45a2 2 0 0 0 1.8-1.11l3.24-6.48A1 1 0 0 0 21.6 8H6.21l-.94-2H7Zm0 15a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 19Zm10 0a2 2 0 1 0 .001 4.001A2 2 0 0 0 17 19Z"/></svg>
-      Cart <span class="cart-count" id="cartCount" aria-label="items in cart">0</span>
-    </button>
+    <div class="header-actions">
+      <div class="search-wrap">
+        <button class="icon-btn" id="searchToggle" type="button" aria-expanded="false" aria-controls="searchForm" aria-label="Search products">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
+        <form class="search" role="search" id="searchForm" hidden>
+          <label class="visually-hidden" for="searchInput">Search products</label>
+          <input id="searchInput" type="search" placeholder="Search henna, cones, oils…" autocomplete="off" />
+        </form>
+      </div>
+      <a class="icon-btn" href="/contact" aria-label="Contact / account">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+      </a>
+      <button class="icon-btn cart-btn" id="cartOpen" type="button" aria-haspopup="dialog" aria-label="Open cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4h-2l-1 2H2v2h2l3.6 7.59-1.35 2.44A2 2 0 0 0 8 21h11v-2H8.42a.25.25 0 0 1-.22-.37L9 17h7.45a2 2 0 0 0 1.8-1.11l3.24-6.48A1 1 0 0 0 21.6 8H6.21l-.94-2H7Zm0 15a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 19Zm10 0a2 2 0 1 0 .001 4.001A2 2 0 0 0 17 19Z"/></svg>
+        <span class="cart-count" id="cartCount" aria-label="items in cart">0</span>
+      </button>
+      <a class="btn btn-book" href="/contact">Book Appointment</a>
+    </div>
   </div>
-  <nav class="catnav" aria-label="Product categories">
-    <div class="wrap catnav-inner" id="catnav"></div>
-  </nav>
 </header>
 
 <main>
@@ -52,8 +73,27 @@
       <a class="btn btn-primary" href="#shop">Shop all products</a>
       <a class="btn btn-ghost" data-site="instagram" href="#" target="_blank" rel="noopener">Follow @firdousehenna</a>
     </div>
-    <div class="hero-media">
-      <img data-site="hero.image" src="images/brand/hero.svg" alt="Henna designs on hands" width="520" height="420" />
+  </section>
+
+  <section class="wrap why" aria-labelledby="whyHeading">
+    <h2 id="whyHeading" class="center-heading">Why Choose Firdouse?</h2>
+    <div class="why-grid">
+      <div class="why-item reveal">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21c-5-2-8-7-8-12 3 0 6 2 8 5 2-3 5-5 8-5 0 5-3 10-8 12Z"/></svg>
+        <span>100% Natural Ingredients</span>
+      </div>
+      <div class="why-item reveal">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <span>Long-Lasting Stain</span>
+      </div>
+      <div class="why-item reveal">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c4 2 7 2 7 2v6c0 5-3 8-7 10-4-2-7-5-7-10V5s3 0 7-2Z"/></svg>
+        <span>Safe for All Skin Types</span>
+      </div>
+      <div class="why-item reveal">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.35-9.5-8A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 3.65-9.5 8-9.5 8Z"/></svg>
+        <span>Made With Love</span>
+      </div>
     </div>
   </section>
 
@@ -66,24 +106,122 @@
     <div class="grid" id="grid"></div>
     <p class="empty" id="emptyState" hidden>No products match that search.</p>
   </section>
+
+  <section id="services" class="wrap services" aria-labelledby="servicesHeading">
+    <h2 id="servicesHeading" class="center-heading">Our Services</h2>
+    <p class="muted center">Beyond products, Firdouse also creates mehendi designs in person.</p>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <h3>Bridal Mehendi</h3>
+        <p>Full hand &amp; feet designs, traditional or modern, for your big day.</p>
+      </div>
+      <div class="service-card reveal">
+        <h3>Engagement Mehendi</h3>
+        <p>Elegant, trendy designs for engagements and celebrations.</p>
+      </div>
+      <div class="service-card reveal">
+        <h3>Festival &amp; Custom Designs</h3>
+        <p>Minimal to heavy, exactly the way you imagine it.</p>
+      </div>
+    </div>
+    <p class="center"><a class="btn btn-primary" href="/contact">Contact us for pricing &amp; availability</a></p>
+  </section>
+
+  <section class="wrap gift-banner" aria-labelledby="giftHeading">
+    <div class="gift-inner">
+      <h2 id="giftHeading">The Perfect Gift for Your Loved Ones</h2>
+      <p>Bridal henna powder &amp; oil make a thoughtful gift for weddings, festivals and return gifts.</p>
+      <a class="btn btn-primary" href="#shop">Shop now</a>
+    </div>
+  </section>
+
+  <section id="work" class="wrap work" aria-labelledby="workHeading">
+    <h2 id="workHeading">Our Work</h2>
+    <p class="muted">Real bridal henna, hand-applied by Firdouse.</p>
+    <div class="work-grid">
+      <img src="images/gallery/work-1.jpg" alt="Bridal henna design on hands and arms" loading="lazy" />
+      <img src="images/gallery/work-2.jpg" alt="Bridal henna design with bangles" loading="lazy" />
+      <img src="images/gallery/work-3.jpg" alt="Fresh henna paste design, multi-colour" loading="lazy" />
+    </div>
+  </section>
+
+  <section class="wrap testimonials" aria-labelledby="testiHeading">
+    <h2 id="testiHeading" class="center-heading">What Our Clients Say</h2>
+    <div class="testi-grid">
+      <blockquote class="testi-card reveal">
+        <span class="verified">Verified client</span>
+        <span class="shot"><img src="images/testimonials/testimonial-fathima.jpg" alt="Instagram comment from fathimanik28 on a Firdouse Heena reel" loading="lazy" /></span>
+        <p>“Thank you soo much for this beautiful mehendi and I just can't stop adoring this rich stain 😍❤️”</p>
+        <cite>— Fathima</cite>
+      </blockquote>
+      <blockquote class="testi-card reveal">
+        <span class="verified">Verified client</span>
+        <span class="shot"><img src="images/testimonials/testimonial-aliya.jpg" alt="WhatsApp message from a Firdouse Heena client" loading="lazy" /></span>
+        <p>“Shukriya for putting this mehendi, loved ur mehendi work 👍❤️”</p>
+        <cite>— WhatsApp Client</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <section id="tips" class="wrap tips" aria-labelledby="tipsHeading">
+    <h2 id="tipsHeading" class="center-heading">Henna Care Tips</h2>
+    <div class="tips-grid">
+      <div class="tip-card reveal">
+        <h3>Getting a darker stain</h3>
+        <p>Leave the paste on for 6–8 hours if you can. Avoid water for the first 24 hours after removing it — the stain keeps darkening on its own during that time.</p>
+      </div>
+      <div class="tip-card reveal">
+        <h3>Aftercare</h3>
+        <p>Once dry, seal the design with a sugar-lemon mix or a dab of clove/eucalyptus oil. Skip soap and scrubbing on the area for a couple of days.</p>
+      </div>
+      <div class="tip-card reveal">
+        <h3>Choosing a design</h3>
+        <p>Bridal hands can carry heavier, fuller coverage; everyday or festival designs look best minimal — send us a reference photo and we'll adapt it to your hand shape.</p>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <div>
+    <div class="footer-brand">
+      <img class="logo-badge" src="images/brand/logo.png" alt="" width="110" height="110" />
       <strong data-site="brand">Firdouse Heena</strong>
+      <p class="footer-script">Art on Your Hands, Always</p>
       <p data-site="tagline"></p>
-      <p class="muted"><a data-site="instagram" href="#" target="_blank" rel="noopener">Instagram</a></p>
     </div>
-    <nav aria-label="Information">
-      <a href="/about">About us</a>
-      <a href="/contact">Contact us</a>
-      <a href="/shipping">Shipping policy</a>
-      <a href="/refund">Cancellation &amp; refunds</a>
-      <a href="/terms">Terms &amp; conditions</a>
-      <a href="/privacy">Privacy policy</a>
+    <nav aria-label="Quick links">
+      <h3>Quick Links</h3>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="#services">Services</a>
+      <a href="#shop">Shop</a>
+      <a href="#work">Gallery</a>
+      <a href="#tips">Blog</a>
+      <a href="/contact">Contact</a>
     </nav>
+    <div class="footer-contact">
+      <h3>Contact</h3>
+      <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-4.5-7-11a7 7 0 0 1 14 0c0 6.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg><span data-site="contact.address"></span></p>
+      <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.7 21 3 13.3 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/></svg><span data-site="contact.phone"></span></p>
+      <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 6.5 8 6 8-6"/></svg><span data-site="contact.email"></span></p>
+    </div>
+    <div class="footer-social">
+      <h3>Follow Us</h3>
+      <a class="social-btn" data-site="instagram" href="#" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+      </a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
     <p class="muted small">Secure payments by Razorpay · UPI, cards, netbanking &amp; wallets.<br />© <span id="year"></span> <span data-site="brand">Firdouse Heena</span>. All rights reserved.</p>
+    <nav aria-label="Legal">
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms &amp; Conditions</a>
+      <a href="/shipping">Shipping Policy</a>
+      <a href="/refund">Cancellation &amp; Refunds</a>
+    </nav>
   </div>
 </footer>
 

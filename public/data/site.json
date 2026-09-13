@@ -2,12 +2,12 @@
   "brand": "Firdouse Heena",
   "tagline": "Natural henna & artist essentials",
   "domain": "https://firdouseheena.pages.dev",
-  "offerBanner": "Up to 25% off on all henna products — free shipping over ₹999",
+  "offerBanner": "Chemical-free bridal henna powder & oil — shipped across India",
   "hero": {
     "heading": "Happy shopping with Firdouse Heena",
     "sub": "Chemical-free henna cones, powders, aftercare and artist supplies — shipped across India.",
     "ctaLabel": "Shop all products",
-    "image": "images/brand/hero.svg"
+    "image": "images/brand/logo-full.jpg"
   },
   "contact": {
     "email": "[FILL IN your business email]",
@@ -16,17 +16,11 @@
     "instagram": "https://www.instagram.com/firdousehenna"
   },
   "shipping": {
-    "freeAbove": 999,
     "flatRate": 59,
-    "note": "Dispatched in 2–4 business days. Delivery 3–8 business days across India."
+    "note": "Flat ₹59 shipping on every order. Dispatched in 2–4 business days; delivery 3–8 business days across India. Prepaid only — no cash on delivery."
   },
   "currency": "INR",
   "categories": [
-    "Henna Powder & Oils",
-    "Bride & Cone Essentials",
-    "Artist Essentials",
-    "Aftercare",
-    "DIY Kits",
-    "Practice Essentials"
+    "Henna Powder & Oils"
   ]
 }

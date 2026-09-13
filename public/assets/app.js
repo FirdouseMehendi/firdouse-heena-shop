@@ -20,7 +20,9 @@
   function loadCart() {
     try {
       const raw = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
-      return Array.isArray(raw) ? raw.filter((l) => l && l.id && l.qty > 0) : [];
+      return Array.isArray(raw)
+        ? raw.filter((l) => l && l.id && l.qty > 0 && Number.isFinite(l.size))
+        : [];
     } catch {
       return [];
     }
@@ -56,7 +58,6 @@
     fillSiteText();
     $("#offerbar").textContent = state.site.offerBanner || "";
     $("#year").textContent = new Date().getFullYear();
-    buildCategoryNav();
     buildFilterChips();
     render();
     wireEvents();
@@ -83,19 +84,6 @@
     return ["All", ...ordered];
   }
 
-  function buildCategoryNav() {
-    const nav = $("#catnav");
-    nav.innerHTML = "";
-    categories().forEach((cat) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.textContent = cat;
-      if (cat === state.category) b.setAttribute("aria-current", "true");
-      b.addEventListener("click", () => setCategory(cat));
-      nav.appendChild(b);
-    });
-  }
-
   function buildFilterChips() {
     const box = $("#filterChips");
     box.innerHTML = "";
@@ -113,9 +101,6 @@
 
   function setCategory(cat) {
     state.category = cat;
-    $$("#catnav button").forEach((b) =>
-      b.toggleAttribute("aria-current", b.textContent === cat)
-    );
     $$("#filterChips .chip").forEach((b) =>
       b.setAttribute("aria-selected", String(b.textContent === cat))
     );
@@ -141,6 +126,30 @@
     return Math.round(((p.mrp - p.price) / p.mrp) * 100);
   }
 
+  /* ---------------- variable pack sizes ---------------- */
+  function sizesOf(p) {
+    return Array.isArray(p.sizes) && p.sizes.length ? p.sizes : [p.defaultSize || 100];
+  }
+  function defaultSizeOf(p) {
+    const s = sizesOf(p);
+    return s.includes(p.defaultSize) ? p.defaultSize : s[0];
+  }
+  function unitPrice(p, size) {
+    return Math.round((Number(p.ratePerUnit) || 0) * size);
+  }
+  function sizeLabel(p, size) {
+    if (p.unit === "ml") return size >= 1000 ? `${size / 1000} L` : `${size} ml`;
+    return size >= 1000 ? `${size / 1000} kg` : `${size} g`;
+  }
+  function rateLabel(p) {
+    const per = Math.round((Number(p.ratePerUnit) || 0) * 1000);
+    return `${money(per)}/${p.unit === "ml" ? "L" : "kg"}`;
+  }
+  function maxPacks(p, size) {
+    if (typeof p.stockUnits !== "number") return 99;
+    return Math.max(0, Math.min(99, Math.floor(p.stockUnits / size)));
+  }
+
   function render() {
     const list = visibleProducts();
     const grid = $("#grid");
@@ -152,10 +161,11 @@
       (state.search ? ` matching “${state.search}”` : "");
 
     list.forEach((p) => {
-      const off = discount(p);
-      const soldOut = typeof p.stock === "number" && p.stock <= 0;
+      const startPrice = unitPrice(p, sizesOf(p)[0]);
+      const soldOut = typeof p.stockUnits === "number" && p.stockUnits <= 0;
       const card = document.createElement("article");
       card.className = "card";
+      if (!soldOut) card.dataset.view = p.id;
       card.innerHTML = `
         <div class="card-media">
           <img src="${p.images?.[0] || "images/products/placeholder.svg"}" alt="${escapeAttr(p.title)}" loading="lazy" width="300" height="300" />
@@ -163,15 +173,16 @@
             ${(p.badges || []).map((b) => `<span class="badge ${b.toLowerCase() === "new" ? "soft" : ""}">${escapeHtml(b)}</span>`).join("")}
             ${soldOut ? '<span class="badge out">Sold out</span>' : ""}
           </div>
+          ${soldOut ? "" : `<button type="button" class="quick-view" data-view="${escapeAttr(p.id)}">View details</button>`}
         </div>
         <div class="card-body">
           <span class="card-cat">${escapeHtml(p.category || "")}</span>
           <h3 class="card-title"><button type="button" data-view="${escapeAttr(p.id)}">${escapeHtml(p.title)}</button></h3>
           <div class="price">
-            <span class="now">${money(p.price)}</span>
-            ${p.mrp && p.mrp > p.price ? `<span class="mrp">${money(p.mrp)}</span><span class="off">${off}% off</span>` : ""}
+            <span class="now">${money(startPrice)}</span>
+            <span class="onwards">onwards &middot; ${escapeHtml(rateLabel(p))}</span>
           </div>
-          <button class="btn btn-primary" data-add="${escapeAttr(p.id)}" ${soldOut ? "disabled" : ""}>${soldOut ? "Sold out" : "Add to cart"}</button>
+          <button class="btn btn-primary" data-view="${escapeAttr(p.id)}" ${soldOut ? "disabled" : ""}>${soldOut ? "Sold out" : "Select size"}</button>
         </div>`;
       grid.appendChild(card);
     });
@@ -183,60 +194,65 @@
     if (!p) return;
     const dlg = $("#productDialog");
     const imgs = p.images?.length ? p.images : ["images/products/placeholder.svg"];
-    const off = discount(p);
-    const soldOut = typeof p.stock === "number" && p.stock <= 0;
+    const soldOut = typeof p.stockUnits === "number" && p.stockUnits <= 0;
+    const dSize = defaultSizeOf(p);
     $("#pdBody").innerHTML = `
       <img class="pd-media" id="pdMain" src="${imgs[0]}" alt="${escapeAttr(p.title)}" />
       ${imgs.length > 1 ? `<div class="pd-thumbs">${imgs.map((s, i) => `<img src="${s}" alt="View ${i + 1}" data-thumb="${s}" ${i === 0 ? 'aria-current="true"' : ""} />`).join("")}</div>` : ""}
       <span class="card-cat">${escapeHtml(p.category || "")}</span>
       <h2 id="pdTitle">${escapeHtml(p.title)}</h2>
-      <div class="price">
-        <span class="now">${money(p.price)}</span>
-        ${p.mrp && p.mrp > p.price ? `<span class="mrp">${money(p.mrp)}</span><span class="off">${off}% off</span>` : ""}
-      </div>
       <p class="muted">${escapeHtml(p.description || "")}</p>
       ${soldOut ? '<p class="form-error">Currently sold out.</p>' : `
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <div class="pd-sizes" role="group" aria-label="Pack size">
+        ${sizesOf(p).map((s) => `<button type="button" data-size="${s}" aria-pressed="${s === dSize}">${escapeHtml(sizeLabel(p, s))}</button>`).join("")}
+      </div>
+      <div class="pd-price">
+        <span class="now" id="pdPrice">${money(unitPrice(p, dSize))}</span>
+        <span class="muted" id="pdUnit">for ${escapeHtml(sizeLabel(p, dSize))} &middot; ${escapeHtml(rateLabel(p))}</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:4px">
         <div class="qty" role="group" aria-label="Quantity">
           <button type="button" data-step="-1" aria-label="Decrease">−</button>
-          <input id="pdQty" type="number" value="1" min="1" max="99" inputmode="numeric" aria-label="Quantity" />
+          <input id="pdQty" type="number" value="1" min="1" max="${Math.max(1, maxPacks(p, dSize))}" inputmode="numeric" aria-label="Quantity" />
           <button type="button" data-step="1" aria-label="Increase">+</button>
         </div>
         <button class="btn btn-primary" id="pdAdd" data-add-detail="${escapeAttr(p.id)}">Add to cart</button>
       </div>`}
     `;
+    dlg.dataset.pid = id;
+    dlg.dataset.size = String(dSize);
     dlg.setAttribute("aria-labelledby", "pdTitle");
     if (!dlg.open) dlg.showModal();
     if (location.hash !== `#/p/${id}`) history.replaceState(null, "", `#/p/${id}`);
   }
 
   /* ---------------- cart ---------------- */
-  function cartLine(id) {
-    return state.cart.find((l) => l.id === id);
+  function cartLine(id, size) {
+    return state.cart.find((l) => l.id === id && l.size === size);
   }
-  function addToCart(id, qty = 1) {
+  function addToCart(id, size, qty = 1) {
     const p = state.products.find((x) => x.id === id);
-    if (!p) return;
-    const max = typeof p.stock === "number" ? p.stock : 99;
-    const line = cartLine(id);
-    const next = Math.min((line?.qty || 0) + qty, Math.max(1, max), 99);
+    if (!p || !sizesOf(p).includes(size)) return;
+    const cap = Math.max(1, maxPacks(p, size));
+    const line = cartLine(id, size);
+    const next = Math.min((line?.qty || 0) + qty, cap);
     if (line) line.qty = next;
-    else state.cart.push({ id, qty: next });
+    else state.cart.push({ id, size, qty: next });
     saveCart();
     updateCartUI();
     openCart();
   }
-  function setQty(id, qty) {
-    const line = cartLine(id);
+  function setQty(id, size, qty) {
+    const line = cartLine(id, size);
     if (!line) return;
     const p = state.products.find((x) => x.id === id);
-    const max = Math.min(typeof p?.stock === "number" ? p.stock : 99, 99);
-    line.qty = Math.max(1, Math.min(qty, Math.max(1, max)));
+    const cap = p ? Math.max(1, maxPacks(p, size)) : 99;
+    line.qty = Math.max(1, Math.min(qty, cap));
     saveCart();
     updateCartUI();
   }
-  function removeLine(id) {
-    state.cart = state.cart.filter((l) => l.id !== id);
+  function removeLine(id, size) {
+    state.cart = state.cart.filter((l) => !(l.id === id && l.size === size));
     saveCart();
     updateCartUI();
   }
@@ -244,7 +260,16 @@
     return state.cart
       .map((l) => {
         const p = state.products.find((x) => x.id === l.id);
-        return p ? { ...p, qty: l.qty, lineTotal: p.price * l.qty } : null;
+        if (!p) return null;
+        const up = unitPrice(p, l.size);
+        return {
+          ...p,
+          size: l.size,
+          qty: l.qty,
+          unitPrice: up,
+          lineTotal: up * l.qty,
+          label: `${p.title} — ${sizeLabel(p, l.size)}`,
+        };
       })
       .filter(Boolean);
   }
@@ -254,13 +279,18 @@
   function shippingFor(sub) {
     const s = state.site.shipping || {};
     if (sub <= 0) return 0;
-    if (s.freeAbove && sub >= s.freeAbove) return 0;
     return Number(s.flatRate || 0);
   }
 
   function updateCartUI() {
     const count = state.cart.reduce((s, l) => s + l.qty, 0);
-    $("#cartCount").textContent = count;
+    const countEl = $("#cartCount");
+    if (countEl.textContent !== String(count)) {
+      countEl.textContent = count;
+      countEl.classList.remove("bump");
+      void countEl.offsetWidth; // restart the animation
+      countEl.classList.add("bump");
+    }
     const lines = cartDetailed();
     const box = $("#cartItems");
     if (!lines.length) {
@@ -272,14 +302,14 @@
         <div class="citem">
           <img src="${l.images?.[0] || "images/products/placeholder.svg"}" alt="" />
           <div>
-            <div class="ct">${escapeHtml(l.title)}</div>
-            <div class="cp">${money(l.price)} each</div>
-            <div class="qty" role="group" aria-label="Quantity for ${escapeAttr(l.title)}">
-              <button type="button" data-cstep="-1" data-id="${escapeAttr(l.id)}" aria-label="Decrease">−</button>
-              <input type="number" value="${l.qty}" min="1" max="99" data-cqty="${escapeAttr(l.id)}" aria-label="Quantity" />
-              <button type="button" data-cstep="1" data-id="${escapeAttr(l.id)}" aria-label="Increase">+</button>
+            <div class="ct">${escapeHtml(l.label)}</div>
+            <div class="cp">${money(l.unitPrice)} each</div>
+            <div class="qty" role="group" aria-label="Quantity for ${escapeAttr(l.label)}">
+              <button type="button" data-cstep="-1" data-id="${escapeAttr(l.id)}" data-size="${l.size}" aria-label="Decrease">−</button>
+              <input type="number" value="${l.qty}" min="1" max="99" data-cqty="${escapeAttr(l.id)}" data-size="${l.size}" aria-label="Quantity" />
+              <button type="button" data-cstep="1" data-id="${escapeAttr(l.id)}" data-size="${l.size}" aria-label="Increase">+</button>
             </div>
-            <button class="rm" data-remove="${escapeAttr(l.id)}">Remove</button>
+            <button class="rm" data-remove="${escapeAttr(l.id)}" data-size="${l.size}">Remove</button>
           </div>
           <div class="ct">${money(l.lineTotal)}</div>
         </div>`
@@ -289,15 +319,11 @@
     const sub = subtotal();
     $("#cartSubtotal").textContent = money(sub);
     const ship = shippingFor(sub);
-    const s = state.site.shipping || {};
     $("#shipNote").textContent = !lines.length
       ? ""
-      : ship === 0
-      ? s.freeAbove && sub >= s.freeAbove
-        ? "Free shipping applied."
-        : "Shipping calculated at checkout."
-      : `+ ${money(ship)} shipping` +
-        (s.freeAbove ? ` (free over ${money(s.freeAbove)})` : "");
+      : ship > 0
+      ? `+ ${money(ship)} shipping`
+      : "Shipping calculated at checkout.";
     $("#checkoutBtn").disabled = lines.length === 0;
   }
 
@@ -326,10 +352,10 @@
       lines
         .map(
           (l) =>
-            `<div class="li"><span>${escapeHtml(l.title)} × ${l.qty}</span><span>${money(l.lineTotal)}</span></div>`
+            `<div class="li"><span>${escapeHtml(l.label)} × ${l.qty}</span><span>${money(l.lineTotal)}</span></div>`
         )
         .join("") +
-      `<div class="li"><span>Shipping</span><span>${ship === 0 ? "Free" : money(ship)}</span></div>` +
+      `<div class="li"><span>Shipping</span><span>${money(ship)}</span></div>` +
       `<div class="li tot"><span>Total</span><span>${money(sub + ship)}</span></div>`;
     $("#checkoutError").hidden = true;
     closeCart();
@@ -356,7 +382,7 @@
 
     const fd = new FormData(form);
     const customer = Object.fromEntries(fd.entries());
-    const items = state.cart.map((l) => ({ id: l.id, qty: l.qty }));
+    const items = state.cart.map((l) => ({ id: l.id, size: l.size, qty: l.qty }));
 
     payBtn.disabled = true;
     payBtn.textContent = "Preparing…";
@@ -390,7 +416,7 @@
         contact: customer.phone,
       },
       notes: { address: `${customer.address}, ${customer.city} ${customer.pincode}` },
-      theme: { color: "#7c2438" },
+      theme: { color: "#1a2d11" },
       modal: {
         ondismiss: () => {
           payBtn.disabled = false;
@@ -450,15 +476,47 @@
       render();
     });
 
+    const searchToggle = $("#searchToggle");
+    const searchForm = $("#searchForm");
+    searchToggle.addEventListener("click", () => {
+      const opening = searchForm.hidden;
+      searchForm.hidden = !opening;
+      searchToggle.setAttribute("aria-expanded", String(opening));
+      if (opening) $("#searchInput").focus();
+    });
+    document.addEventListener("click", (e) => {
+      if (!searchForm.hidden && !e.target.closest(".search-wrap")) {
+        searchForm.hidden = true;
+        searchToggle.setAttribute("aria-expanded", "false");
+      }
+    });
+
     document.body.addEventListener("click", (e) => {
-      const t = e.target.closest("[data-view],[data-add],[data-add-detail],[data-thumb],[data-step],[data-remove],[data-cstep]");
+      const t = e.target.closest("[data-view],[data-add-detail],[data-size],[data-thumb],[data-step],[data-remove],[data-cstep]");
       if (!t) return;
       if (t.dataset.view) openProduct(t.dataset.view);
-      else if (t.dataset.add) addToCart(t.dataset.add, 1);
-      else if (t.dataset.addDetail) {
+      else if (t.dataset.size) {
+        const dlg = $("#productDialog");
+        const p = state.products.find((x) => x.id === dlg.dataset.pid);
+        if (!p) return;
+        const size = parseInt(t.dataset.size, 10);
+        dlg.dataset.size = String(size);
+        $$("#productDialog .pd-sizes button").forEach((b) =>
+          b.setAttribute("aria-pressed", String(b === t))
+        );
+        $("#pdPrice").textContent = money(unitPrice(p, size));
+        $("#pdUnit").textContent = `for ${sizeLabel(p, size)} · ${rateLabel(p)}`;
+        const inp = $("#pdQty");
+        if (inp) {
+          inp.max = String(Math.max(1, maxPacks(p, size)));
+          if ((parseInt(inp.value, 10) || 1) > Number(inp.max)) inp.value = inp.max;
+        }
+      } else if (t.dataset.addDetail) {
+        const dlg = $("#productDialog");
+        const size = parseInt(dlg.dataset.size, 10) || 0;
         const q = parseInt($("#pdQty")?.value, 10) || 1;
-        addToCart(t.dataset.addDetail, q);
-        $("#productDialog").close();
+        addToCart(t.dataset.addDetail, size, q);
+        dlg.close();
       } else if (t.dataset.thumb) {
         $("#pdMain").src = t.dataset.thumb;
         $$("#productDialog .pd-thumbs img").forEach((i) =>
@@ -466,18 +524,20 @@
         );
       } else if (t.dataset.step) {
         const inp = $("#pdQty");
-        inp.value = Math.max(1, Math.min(99, (parseInt(inp.value, 10) || 1) + Number(t.dataset.step)));
+        const cap = parseInt(inp.max, 10) || 99;
+        inp.value = Math.max(1, Math.min(cap, (parseInt(inp.value, 10) || 1) + Number(t.dataset.step)));
       } else if (t.dataset.remove) {
-        removeLine(t.dataset.remove);
+        removeLine(t.dataset.remove, parseInt(t.dataset.size, 10));
       } else if (t.dataset.cstep) {
-        const line = cartLine(t.dataset.id);
-        if (line) setQty(t.dataset.id, line.qty + Number(t.dataset.cstep));
+        const size = parseInt(t.dataset.size, 10);
+        const line = cartLine(t.dataset.id, size);
+        if (line) setQty(t.dataset.id, size, line.qty + Number(t.dataset.cstep));
       }
     });
 
     $("#cartItems").addEventListener("change", (e) => {
       const inp = e.target.closest("[data-cqty]");
-      if (inp) setQty(inp.dataset.cqty, parseInt(inp.value, 10) || 1);
+      if (inp) setQty(inp.dataset.cqty, parseInt(inp.dataset.size, 10), parseInt(inp.value, 10) || 1);
     });
 
     $("#cartOpen").addEventListener("click", openCart);
@@ -498,6 +558,30 @@
     });
 
     window.addEventListener("hashchange", handleHash);
+
+    const header = $(".site-header");
+    window.addEventListener(
+      "scroll",
+      () => header.classList.toggle("is-scrolled", window.scrollY > 4),
+      { passive: true }
+    );
+
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in");
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15 }
+      );
+      $$(".reveal").forEach((el) => io.observe(el));
+    } else {
+      $$(".reveal").forEach((el) => el.classList.add("in"));
+    }
   }
 
   function handleHash() {
