@@ -597,6 +597,14 @@
     return escapeHtml(s);
   }
 
+  /* ---------------- public hook for other widgets (AI consultant) ---------------- */
+  window.FH = {
+    addToCart,
+    openProduct,
+    getProducts: () => state.products,
+    money,
+  };
+
   if (document.readyState === "loading")
     document.addEventListener("DOMContentLoaded", boot);
   else boot();

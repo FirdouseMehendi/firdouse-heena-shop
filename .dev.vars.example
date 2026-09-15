@@ -4,3 +4,8 @@
 
 RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxxxx
 RAZORPAY_KEY_SECRET=xxxxxxxxxxxxxxxxxxxxxxxx
+
+# Powers the AI henna consultant chat widget — a free key from Groq
+# (console.groq.com/keys), no credit card required.
+# Optional — the shop works fine without it, the chat widget just stays off.
+GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

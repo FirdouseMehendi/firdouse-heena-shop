@@ -24,6 +24,7 @@ public/                     everything the browser downloads
 functions/api/
   create-order.js           builds the Razorpay order from trusted prices
   verify-payment.js         checks the payment signature
+  consult.js                AI henna consultant (chat widget on the site)
 .dev.vars.example           template for local secrets
 ```
 
@@ -128,8 +129,9 @@ Check:
 | --- | --- |
 | `RAZORPAY_KEY_ID` | your `rzp_test_…` (switch to `rzp_live_…` when ready) |
 | `RAZORPAY_KEY_SECRET` | the matching secret |
+| `GROQ_API_KEY` | optional — turns on the AI henna consultant, see [section 11](#11-ai-henna-consultant-optional) |
 
-Then **Deployments → Retry deployment** so the new values take effect. (Add the same two under **Preview** if you want preview builds to take payments too.)
+Then **Deployments → Retry deployment** so the new values take effect. (Add the same variables under **Preview** if you want preview builds to take payments / AI chat too.)
 
 ---
 
@@ -159,6 +161,18 @@ Buy a domain (e.g. from Cloudflare Registrar — at cost). In the Pages project 
 - **Order email:** add a Razorpay **webhook** (`payment.captured`) → a third function that emails you each order. Until then, every order is in the Razorpay dashboard.
 - **Coupon codes**, customer accounts, live courier rates.
 - **Separate product pages** for better Google ranking (would add a small build step).
+
+---
+
+## 11. AI henna consultant (optional)
+
+A chat widget ("Ask our Henna Expert", bottom-right on the homepage) that recommends real products from `products.json` and answers care/application questions. It's grounded in your actual catalog server-side (`functions/api/consult.js`) — it can't invent products or prices, and it only ever suggests items + sizes that really exist.
+
+**Turn it on (free, no card needed):**
+1. Go to **console.groq.com/keys**, sign in (email or Google), click **Create API Key**. It's free.
+2. Add `GROQ_API_KEY` to Cloudflare (see table above) and to your local `.dev.vars`, then redeploy / restart `npm run dev`.
+
+Without a key, the widget still shows but replies with a friendly "not switched on yet" message — the rest of the shop is unaffected. To change what it knows, edit the `CARE_TIPS` text or the product descriptions it reads from `functions/api/consult.js` / `public/data/products.json`.
 
 ---
 
