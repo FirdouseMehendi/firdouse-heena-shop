@@ -1,0 +1,19 @@
+{
+  "bridal": [
+    { "src": "images/designs/bridal-1.webp", "alt": "Bridal henna — full hand and arm, dark floral bel design" },
+    { "src": "images/designs/bridal-2.webp", "alt": "Bridal henna — both hands, rose motifs and wrist mandala" },
+    { "src": "images/designs/bridal-3.webp", "alt": "Bridal henna — foot design with rose and jaal pattern" }
+  ],
+  "arabic": [
+    { "src": "images/designs/arabic-1.webp", "alt": "Arabic / Khaleeji style henna motif sheet — bold floral corner design" }
+  ],
+  "indian floral": [
+    { "src": "images/designs/floral-1.webp", "alt": "Indian floral henna motifs — rose and hibiscus elements" }
+  ],
+  "minimalist": [
+    { "src": "images/designs/minimalist-1.webp", "alt": "Minimalist henna motifs — small basic detailing elements" }
+  ],
+  "festival indo-western": [
+    { "src": "images/designs/festival-1.webp", "alt": "Festival / Indo-Western henna motifs — rings and celebration elements" }
+  ]
+}

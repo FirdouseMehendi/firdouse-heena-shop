@@ -1,57 +1,60 @@
-/* Firdouse Heena — AI henna design preview. Generates a design inspiration
-   image via Pollinations' free, keyless image API (not a preview on the
-   customer's actual hand — see the disclaimer text in index.html). */
+/* Firdouse Heena — henna design preview. Shows a real design photo from
+   Firdouse's own portfolio, picked by style (see public/data/designs.json).
+   Not AI-generated — real work, so what customers see is what she can do. */
 (() => {
   "use strict";
 
   const $ = (sel, root = document) => root.querySelector(sel);
+  let designs = null;
+
+  async function loadDesigns() {
+    if (designs) return designs;
+    const res = await fetch("data/designs.json");
+    designs = await res.json();
+    return designs;
+  }
 
   function mount() {
     const form = $("#designPreviewForm");
     if (!form) return;
 
     const styleSelect = $("#dp-style");
-    const occasionInput = $("#dp-occasion");
     const result = $("#designPreviewResult");
     const img = $("#designPreviewImg");
     const btn = form.querySelector('button[type="submit"]');
+    const lastShown = {};
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (btn.disabled) return;
 
       const style = styleSelect.value;
-      const occasion = occasionInput.value.trim().slice(0, 120);
-      const prompt = [
-        "intricate traditional mehndi henna design",
-        `${style} style`,
-        occasion ? `for ${occasion}` : "",
-        "dark brown henna paste pattern on hand and fingers, high detail, photorealistic, professional henna artist work",
-      ]
-        .filter(Boolean)
-        .join(", ");
-
-      const seed = Math.floor(Math.random() * 1e6);
-      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=768&nologo=true&seed=${seed}`;
 
       btn.disabled = true;
-      btn.textContent = "Generating…";
+      btn.textContent = "Loading…";
       result.hidden = true;
 
-      const loader = new Image();
-      loader.onload = () => {
-        img.src = url;
+      try {
+        const all = await loadDesigns();
+        const pool = all[style] || [];
+        if (!pool.length) throw new Error("No designs for this style yet");
+
+        let pick = pool[Math.floor(Math.random() * pool.length)];
+        if (pool.length > 1 && pick.src === lastShown[style]) {
+          pick = pool[(pool.indexOf(pick) + 1) % pool.length];
+        }
+        lastShown[style] = pick.src;
+
+        img.src = pick.src;
+        img.alt = pick.alt;
         result.hidden = false;
-        btn.disabled = false;
-        btn.textContent = "Generate design";
         result.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      };
-      loader.onerror = () => {
+      } catch {
+        alert("Could not load a design preview right now. Please try again.");
+      } finally {
         btn.disabled = false;
-        btn.textContent = "Generate design";
-        alert("Could not generate a preview right now. Please try again.");
-      };
-      loader.src = url;
+        btn.textContent = "Show me a design";
+      }
     });
   }
 

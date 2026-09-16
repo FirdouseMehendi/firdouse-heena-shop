@@ -437,6 +437,9 @@ dialog.dialog::backdrop { background: rgba(31, 26, 27, .5); }
 .page .updated { color: var(--muted); font-size: .85rem; }
 
 /* ---------------- AI henna consultant widget ---------------- */
+/* Hidden while the cart drawer is open — otherwise the fixed-position FAB
+   sits on top of the drawer's Checkout button and steals its clicks. */
+#cartDrawer.open ~ .fh-consultant { display: none; }
 .fh-consultant-fab {
   position: fixed; right: 18px; bottom: 18px; z-index: 200;
   display: flex; align-items: center; gap: 8px;
