@@ -431,7 +431,7 @@
             body: JSON.stringify(resp),
           }).then((r) => r.json());
           if (!v.ok) throw new Error("We could not verify the payment. If money was debited, contact us with your payment ID.");
-          orderComplete(resp.razorpay_payment_id);
+          orderComplete(resp.razorpay_payment_id, items);
         } catch (err) {
           showCheckoutError(err.message);
           payBtn.disabled = false;
@@ -455,7 +455,7 @@
     box.hidden = false;
   }
 
-  function orderComplete(paymentId) {
+  function orderComplete(paymentId, purchasedItems) {
     state.cart = [];
     saveCart();
     updateCartUI();
@@ -466,6 +466,27 @@
     $("#payBtn").textContent = "Pay securely";
     $("#successPaymentId").textContent = paymentId || "—";
     $("#successDialog").showModal();
+    loadCareTips(purchasedItems);
+  }
+
+  async function loadCareTips(items) {
+    const box = $("#careTips");
+    const text = $("#careTipsText");
+    if (!box || !text || !items || !items.length) return;
+    box.hidden = false;
+    text.textContent = "Getting your personalized care tips…";
+    try {
+      const res = await fetch("api/order-care", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ items }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.tips) throw new Error();
+      text.textContent = data.tips;
+    } catch {
+      box.hidden = true;
+    }
   }
 
   /* ---------------- events ---------------- */

@@ -12,6 +12,7 @@
 
 import products from "../../public/data/products.json";
 import site from "../../public/data/site.json";
+import { CARE_TIPS } from "../_shared/care-tips.js";
 
 const MODEL = "openai/gpt-oss-120b";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
@@ -46,11 +47,6 @@ function catalogForPrompt() {
     })
     .join("\n\n");
 }
-
-const CARE_TIPS = `- Getting a darker stain: leave the paste on 6-8 hours if possible; avoid water for the first 24 hours after removing it, the stain keeps darkening on its own.
-- Aftercare: once dry, seal the design with a sugar-lemon mix or a dab of clove/eucalyptus oil; skip soap and scrubbing on the area for a couple of days.
-- Choosing a design: bridal hands can carry heavier, fuller coverage; everyday or festival designs look best minimal.
-- Bridal Henna Oil is a terping oil blend applied before the henna paste (or mixed a few drops into the paste) to darken the final stain.`;
 
 function systemPrompt() {
   return `You are the AI henna consultant for "${site.brand}" (${site.tagline}), a small online henna shop shipping across India (flat ₹${site.shipping?.flatRate ?? 59} shipping, prepaid only).

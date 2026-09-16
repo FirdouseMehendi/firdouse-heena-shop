@@ -25,6 +25,9 @@ functions/api/
   create-order.js           builds the Razorpay order from trusted prices
   verify-payment.js         checks the payment signature
   consult.js                AI henna consultant (chat widget on the site)
+  order-care.js             AI personalized care tips after checkout
+functions/_shared/
+  care-tips.js              care-tip text shared by consult.js + order-care.js
 .dev.vars.example           template for local secrets
 ```
 
@@ -172,7 +175,19 @@ A chat widget ("Ask our Henna Expert", bottom-right on the homepage) that recomm
 1. Go to **console.groq.com/keys**, sign in (email or Google), click **Create API Key**. It's free.
 2. Add `GROQ_API_KEY` to Cloudflare (see table above) and to your local `.dev.vars`, then redeploy / restart `npm run dev`.
 
-Without a key, the widget still shows but replies with a friendly "not switched on yet" message — the rest of the shop is unaffected. To change what it knows, edit the `CARE_TIPS` text or the product descriptions it reads from `functions/api/consult.js` / `public/data/products.json`.
+Without a key, the widget still shows but replies with a friendly "not switched on yet" message — the rest of the shop is unaffected. To change what it knows, edit the shared `CARE_TIPS` text in `functions/_shared/care-tips.js`, or the product descriptions in `public/data/products.json`.
+
+---
+
+## 12. AI personalized post-purchase care tips
+
+Right after a successful payment, the order-confirmed screen calls `functions/api/order-care.js` (same `GROQ_API_KEY`) to generate a short care/application plan for the exact products just bought, instead of a generic tip. It never blocks or breaks checkout — with no key, bad input, or an API hiccup it silently falls back to a static care tip, since the payment has already gone through by that point.
+
+This isn't an emailed receipt — sending to a customer's actual inbox needs a verified sending domain (e.g. via Resend/SendGrid), which this shop doesn't have set up. Razorpay still emails its own payment receipt.
+
+## 13. AI henna design preview
+
+A "Generate design" form (style + occasion) on the homepage that calls Pollinations' free, keyless image API (`public/assets/design-preview.js`) to generate a henna design **inspiration** image — not an overlay on the customer's own photo, just AI art matching their chosen style/occasion, with a clear disclaimer under the image. No API key or account needed; it's a direct client-side call to `image.pollinations.ai`.
 
 ---
 

@@ -18,6 +18,7 @@
 <script defer src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script defer src="assets/app.js"></script>
 <script defer src="assets/consultant.js"></script>
+<script defer src="assets/design-preview.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#shop">Skip to products</a>
@@ -182,6 +183,32 @@
     </div>
   </section>
 
+  <section id="design-preview" class="wrap design-preview" aria-labelledby="designPreviewHeading">
+    <h2 id="designPreviewHeading" class="center-heading">AI Henna Design Preview</h2>
+    <p class="muted center">Pick a style and occasion — our AI will generate a henna design idea to inspire your booking.</p>
+    <form class="design-preview-form" id="designPreviewForm">
+      <div class="field">
+        <label for="dp-style">Style</label>
+        <select id="dp-style">
+          <option value="bridal">Bridal</option>
+          <option value="arabic">Arabic</option>
+          <option value="indian floral">Indian Floral</option>
+          <option value="minimalist">Minimalist</option>
+          <option value="festival indo-western">Festival / Indo-Western</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="dp-occasion">Occasion / notes <span class="muted">(optional)</span></label>
+        <input id="dp-occasion" type="text" placeholder="e.g. sister's wedding, full hand" maxlength="120" autocomplete="off" />
+      </div>
+      <button class="btn btn-primary" type="submit">Generate design</button>
+    </form>
+    <div class="design-preview-result" id="designPreviewResult" hidden>
+      <img id="designPreviewImg" alt="AI-generated henna design preview" loading="lazy" />
+      <p class="muted small center">AI-generated inspiration, not an exact preview of your hand — actual bridal work by Firdouse may vary. <a href="/contact">Book the real thing</a>.</p>
+    </div>
+  </section>
+
 </main>
 
 <footer class="site-footer">
@@ -278,6 +305,10 @@
   <h2>Thank you! Your order is confirmed.</h2>
   <p>We've recorded your order and will dispatch it soon. A payment receipt has been sent by Razorpay.</p>
   <p class="muted small">Payment ID: <span id="successPaymentId"></span></p>
+  <div class="care-tips" id="careTips" hidden>
+    <strong class="care-tips-label">🌿 Your personalized care plan</strong>
+    <p class="care-tips-text" id="careTipsText"></p>
+  </div>
   <button class="btn btn-primary" data-close type="button">Continue shopping</button>
 </dialog>
 

@@ -484,3 +484,31 @@ dialog.dialog::backdrop { background: rgba(31, 26, 27, .5); }
   .fh-consultant-fab span:not([aria-hidden]) { display: none; }
   .fh-consultant-panel { right: 10px; left: 10px; width: auto; bottom: 76px; }
 }
+
+/* ---------------- post-purchase AI care tips ---------------- */
+.care-tips {
+  background: var(--sand); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px; margin: 14px 0; text-align: left;
+}
+.care-tips-label { display: block; font-size: .85rem; margin-bottom: 4px; }
+.care-tips-text { margin: 0; font-size: .88rem; line-height: 1.5; color: var(--ink); }
+
+/* ---------------- AI henna design preview ---------------- */
+.design-preview-form {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px;
+  max-width: 640px; margin: 20px auto 0; justify-content: center;
+}
+.design-preview-form .field { margin-bottom: 0; min-width: 200px; flex: 1; }
+.design-preview-form select {
+  border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; font: inherit; width: 100%; background: #fff;
+}
+.design-preview-result { max-width: 480px; margin: 24px auto 0; text-align: center; }
+.design-preview-result img {
+  width: 100%; height: auto; border-radius: var(--radius); box-shadow: var(--shadow); aspect-ratio: 1 / 1; object-fit: cover;
+}
+.design-preview-result p { margin-top: 10px; }
+
+@media (max-width: 480px) {
+  .design-preview-form { flex-direction: column; align-items: stretch; }
+  .design-preview-form button { width: 100%; }
+}
