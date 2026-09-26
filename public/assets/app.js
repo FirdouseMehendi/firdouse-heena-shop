@@ -56,6 +56,11 @@
     }
 
     fillSiteText();
+    fetch("/api/log-visit", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ path: location.pathname, referrer: document.referrer }),
+    }).catch(() => {});
     $("#offerbar").textContent = state.site.offerBanner || "";
     $("#year").textContent = new Date().getFullYear();
     buildFilterChips();
@@ -135,19 +140,40 @@
     return s.includes(p.defaultSize) ? p.defaultSize : s[0];
   }
   function unitPrice(p, size) {
+    if (p.priceOverrides && p.priceOverrides[size] != null) return Number(p.priceOverrides[size]);
     return Math.round((Number(p.ratePerUnit) || 0) * size);
   }
+  function mrpPrice(p, size) {
+    if (p.mrpOverrides && p.mrpOverrides[size] != null) return Number(p.mrpOverrides[size]);
+    return Math.round((Number(p.mrpPerUnit) || 0) * size);
+  }
+  function discountPct(p, size) {
+    size = size || sizesOf(p)[0];
+    const now = unitPrice(p, size);
+    const mrp = mrpPrice(p, size);
+    if (!mrp || mrp <= now) return 0;
+    return Math.round((1 - now / mrp) * 100);
+  }
   function sizeLabel(p, size) {
+    if (p.sizeLabels && p.sizeLabels[size] != null) return p.sizeLabels[size];
     if (p.unit === "ml") return size >= 1000 ? `${size / 1000} L` : `${size} ml`;
-    return size >= 1000 ? `${size / 1000} kg` : `${size} g`;
+    if (p.unit === "g") return size >= 1000 ? `${size / 1000} kg` : `${size} g`;
+    if (p.unit === "pc") return size > 1 ? `Pack of ${size}` : "1 pc";
+    if (p.unit === "kit") return "1 kit";
+    if (p.unit === "pack") return "1 pack";
+    return `${size} ${p.unit}`;
   }
   function rateLabel(p) {
-    const per = Math.round((Number(p.ratePerUnit) || 0) * 1000);
-    return `${money(per)}/${p.unit === "ml" ? "L" : "kg"}`;
+    if (p.priceOverrides) return "choose size";
+    if (p.unit === "ml") return `${money(Math.round((Number(p.ratePerUnit) || 0) * 1000))}/L`;
+    if (p.unit === "g") return `${money(Math.round((Number(p.ratePerUnit) || 0) * 1000))}/kg`;
+    if (p.unit === "pc" && Math.max(...(p.sizes || [1])) > 1) return `${money(Math.round(Number(p.ratePerUnit) || 0))}/pc`;
+    return "flat price";
   }
+  const MAX_QTY_PER_LINE = 10;
   function maxPacks(p, size) {
-    if (typeof p.stockUnits !== "number") return 99;
-    return Math.max(0, Math.min(99, Math.floor(p.stockUnits / size)));
+    if (typeof p.stockUnits !== "number") return MAX_QTY_PER_LINE;
+    return Math.max(0, Math.min(MAX_QTY_PER_LINE, Math.floor(p.stockUnits / size)));
   }
 
   function render() {
@@ -161,7 +187,10 @@
       (state.search ? ` matching “${state.search}”` : "");
 
     list.forEach((p) => {
-      const startPrice = unitPrice(p, sizesOf(p)[0]);
+      const startSize = sizesOf(p)[0];
+      const startPrice = unitPrice(p, startSize);
+      const startMrp = mrpPrice(p, startSize);
+      const pct = discountPct(p);
       const soldOut = typeof p.stockUnits === "number" && p.stockUnits <= 0;
       const card = document.createElement("article");
       card.className = "card";
@@ -170,6 +199,7 @@
         <div class="card-media">
           <img src="${p.images?.[0] || "images/products/placeholder.svg"}" alt="${escapeAttr(p.title)}" loading="lazy" width="300" height="300" />
           <div class="card-badges">
+            ${pct > 0 ? `<span class="badge sale">${pct}% OFF</span>` : ""}
             ${(p.badges || []).map((b) => `<span class="badge ${b.toLowerCase() === "new" ? "soft" : ""}">${escapeHtml(b)}</span>`).join("")}
             ${soldOut ? '<span class="badge out">Sold out</span>' : ""}
           </div>
@@ -179,8 +209,9 @@
           <span class="card-cat">${escapeHtml(p.category || "")}</span>
           <h3 class="card-title"><button type="button" data-view="${escapeAttr(p.id)}">${escapeHtml(p.title)}</button></h3>
           <div class="price">
+            ${pct > 0 ? `<span class="mrp">${money(startMrp)}</span>` : ""}
             <span class="now">${money(startPrice)}</span>
-            <span class="onwards">onwards &middot; ${escapeHtml(rateLabel(p))}</span>
+            <span class="onwards">${sizesOf(p).length > 1 ? `onwards &middot; ${escapeHtml(rateLabel(p))}` : escapeHtml(rateLabel(p))}</span>
           </div>
           <button class="btn btn-primary" data-view="${escapeAttr(p.id)}" ${soldOut ? "disabled" : ""}>${soldOut ? "Sold out" : "Select size"}</button>
         </div>`;
@@ -197,7 +228,7 @@
     const soldOut = typeof p.stockUnits === "number" && p.stockUnits <= 0;
     const dSize = defaultSizeOf(p);
     $("#pdBody").innerHTML = `
-      <img class="pd-media" id="pdMain" src="${imgs[0]}" alt="${escapeAttr(p.title)}" />
+      <img class="pd-media" id="pdMain" src="${imgs[0]}" alt="${escapeAttr(p.title)}" data-lightbox />
       ${imgs.length > 1 ? `<div class="pd-thumbs">${imgs.map((s, i) => `<img src="${s}" alt="View ${i + 1}" data-thumb="${s}" ${i === 0 ? 'aria-current="true"' : ""} />`).join("")}</div>` : ""}
       <span class="card-cat">${escapeHtml(p.category || "")}</span>
       <h2 id="pdTitle">${escapeHtml(p.title)}</h2>
@@ -206,17 +237,21 @@
       <div class="pd-sizes" role="group" aria-label="Pack size">
         ${sizesOf(p).map((s) => `<button type="button" data-size="${s}" aria-pressed="${s === dSize}">${escapeHtml(sizeLabel(p, s))}</button>`).join("")}
       </div>
-      <div class="pd-price">
-        <span class="now" id="pdPrice">${money(unitPrice(p, dSize))}</span>
-        <span class="muted" id="pdUnit">for ${escapeHtml(sizeLabel(p, dSize))} &middot; ${escapeHtml(rateLabel(p))}</span>
-      </div>
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:4px">
-        <div class="qty" role="group" aria-label="Quantity">
-          <button type="button" data-step="-1" aria-label="Decrease">−</button>
-          <input id="pdQty" type="number" value="1" min="1" max="${Math.max(1, maxPacks(p, dSize))}" inputmode="numeric" aria-label="Quantity" />
-          <button type="button" data-step="1" aria-label="Increase">+</button>
+      <div class="pd-footer">
+        <div class="pd-price">
+          <span class="mrp" id="pdMrp">${discountPct(p) > 0 ? money(mrpPrice(p, dSize)) : ""}</span>
+          <span class="now" id="pdPrice">${money(unitPrice(p, dSize))}</span>
+          ${discountPct(p) > 0 ? `<span class="badge sale">${discountPct(p)}% OFF</span>` : ""}
+          <span class="muted" id="pdUnit">for ${escapeHtml(sizeLabel(p, dSize))} &middot; ${escapeHtml(rateLabel(p))}</span>
         </div>
-        <button class="btn btn-primary" id="pdAdd" data-add-detail="${escapeAttr(p.id)}">Add to cart</button>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <div class="qty" role="group" aria-label="Quantity">
+            <button type="button" data-step="-1" aria-label="Decrease">−</button>
+            <input id="pdQty" type="number" value="1" min="1" max="${Math.max(1, maxPacks(p, dSize))}" inputmode="numeric" aria-label="Quantity" />
+            <button type="button" data-step="1" aria-label="Increase">+</button>
+          </div>
+          <button class="btn btn-primary" id="pdAdd" data-add-detail="${escapeAttr(p.id)}">Add to cart</button>
+        </div>
       </div>`}
     `;
     dlg.dataset.pid = id;
@@ -241,6 +276,11 @@
     saveCart();
     updateCartUI();
     openCart();
+    fetch("/api/log-cart", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ productId: id, productTitle: p.title, size, qty }),
+    }).catch(() => {});
   }
   function setQty(id, size, qty) {
     const line = cartLine(id, size);
@@ -276,10 +316,35 @@
   function subtotal() {
     return cartDetailed().reduce((s, l) => s + l.lineTotal, 0);
   }
-  function shippingFor(sub) {
-    const s = state.site.shipping || {};
+  // Returns the zone shipping rate for a typed state name, or null if the
+  // state is blank/unrecognised (caller shows "calculated at checkout").
+  function ratePerKgForState(stateRaw) {
+    const s = String(stateRaw || "").trim().toLowerCase();
+    if (!s) return null;
+    const zones = state.site.shipping?.zones || [];
+    for (const zone of zones) {
+      if ((zone.states || []).some((z) => s.includes(z) || z.includes(s))) return Number(zone.ratePerKg) || 0;
+    }
+    return Number(state.site.shipping?.defaultRatePerKg) || 0;
+  }
+  function cartWeightKg() {
+    let grams = 0;
+    state.cart.forEach((l) => {
+      const p = state.products.find((x) => x.id === l.id);
+      if (!p) return;
+      const isWeightBased = p.unit === "g" || p.unit === "ml";
+      const perUnitGrams = (isWeightBased ? l.size : 0) + (Number(p.packagingGrams) || 0);
+      grams += perUnitGrams * l.qty;
+    });
+    return grams / 1000;
+  }
+  function shippingFor(sub, stateRaw) {
     if (sub <= 0) return 0;
-    return Number(s.flatRate || 0);
+    const ratePerKg = ratePerKgForState(stateRaw);
+    if (ratePerKg == null) return null;
+    const kg = cartWeightKg();
+    const tier = kg > 0 ? Math.max(1, Math.round(kg)) : 0;
+    return tier * ratePerKg;
   }
 
   function updateCartUI() {
@@ -334,20 +399,27 @@
     $("#cartDrawer").setAttribute("aria-hidden", "false");
     $("#drawerBackdrop").hidden = false;
     $("#cartClose").focus();
+    lockScroll();
   }
   function closeCart() {
     $("#cartDrawer").classList.remove("open");
     $("#cartDrawer").setAttribute("aria-hidden", "true");
     $("#drawerBackdrop").hidden = true;
     if (state.lastFocus) state.lastFocus.focus();
+    unlockScroll();
   }
 
   /* ---------------- checkout ---------------- */
-  function openCheckout() {
+  function renderCheckoutSummary() {
     const lines = cartDetailed();
     if (!lines.length) return;
     const sub = subtotal();
-    const ship = shippingFor(sub);
+    const stateVal = $("#cf-state")?.value || "";
+    const ship = shippingFor(sub, stateVal);
+    const shipRow =
+      ship == null
+        ? `<div class="li"><span>Shipping</span><span class="muted">Enter your state below</span></div>`
+        : `<div class="li"><span>Shipping</span><span>${money(ship)}</span></div>`;
     $("#coSummary").innerHTML =
       lines
         .map(
@@ -355,8 +427,13 @@
             `<div class="li"><span>${escapeHtml(l.label)} × ${l.qty}</span><span>${money(l.lineTotal)}</span></div>`
         )
         .join("") +
-      `<div class="li"><span>Shipping</span><span>${money(ship)}</span></div>` +
-      `<div class="li tot"><span>Total</span><span>${money(sub + ship)}</span></div>`;
+      shipRow +
+      `<div class="li tot"><span>Total</span><span>${money(sub + (ship || 0))}</span></div>`;
+  }
+  function openCheckout() {
+    const lines = cartDetailed();
+    if (!lines.length) return;
+    renderCheckoutSummary();
     $("#checkoutError").hidden = true;
     closeCart();
     $("#checkoutDialog").showModal();
@@ -392,11 +469,16 @@
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ items, customer }),
+        signal: AbortSignal.timeout(15000),
       });
       order = await res.json();
       if (!res.ok) throw new Error(order.error || "Could not start payment.");
     } catch (err) {
-      showCheckoutError(err.message || "Could not start payment. Please retry.");
+      const msg =
+        err.name === "TimeoutError" || err.name === "AbortError"
+          ? "This is taking too long. Please check your connection and try again."
+          : err.message || "Could not start payment. Please retry.";
+      showCheckoutError(msg);
       payBtn.disabled = false;
       payBtn.textContent = "Pay securely";
       return;
@@ -419,6 +501,7 @@
       theme: { color: "#1a2d11" },
       modal: {
         ondismiss: () => {
+          if (!$("#checkoutDialog").open) $("#checkoutDialog").showModal();
           payBtn.disabled = false;
           payBtn.textContent = "Pay securely";
         },
@@ -431,8 +514,22 @@
             body: JSON.stringify(resp),
           }).then((r) => r.json());
           if (!v.ok) throw new Error("We could not verify the payment. If money was debited, contact us with your payment ID.");
+          fetch("/api/log-order", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              razorpay_order_id: order.order_id,
+              razorpay_payment_id: resp.razorpay_payment_id,
+              amount_paise: order.amount,
+              items: order.lines,
+              customer_name: customer.name,
+              customer_phone: customer.phone,
+              customer_email: customer.email,
+            }),
+          }).catch(() => {});
           orderComplete(resp.razorpay_payment_id, items);
         } catch (err) {
+          if (!$("#checkoutDialog").open) $("#checkoutDialog").showModal();
           showCheckoutError(err.message);
           payBtn.disabled = false;
           payBtn.textContent = "Pay securely";
@@ -440,12 +537,14 @@
       },
     });
     rzp.on("payment.failed", (r) => {
+      if (!$("#checkoutDialog").open) $("#checkoutDialog").showModal();
       showCheckoutError(
         (r.error && r.error.description) || "Payment failed. Please try again."
       );
       payBtn.disabled = false;
       payBtn.textContent = "Pay securely";
     });
+    $("#checkoutDialog").close();
     rzp.open();
   }
 
@@ -490,7 +589,43 @@
   }
 
   /* ---------------- events ---------------- */
+  /* Locks page scroll behind any open dialog/drawer, so the shop behind it never
+     shows or scrolls through. Shared by every dialog, the cart drawer, and any future one. */
+  let scrollLockCount = 0;
+  let scrollLockY = 0;
+  function lockScroll() {
+    if (scrollLockCount++ > 0) return;
+    scrollLockY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollLockY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+  }
+  function unlockScroll() {
+    if (--scrollLockCount > 0) return;
+    scrollLockCount = 0;
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    window.scrollTo(0, scrollLockY);
+  }
+  function wireDialogScrollLock() {
+    document.querySelectorAll("dialog.dialog").forEach((dlg) => {
+      new MutationObserver((muts) => {
+        for (const m of muts) {
+          if (m.attributeName !== "open") continue;
+          if (dlg.hasAttribute("open")) lockScroll();
+          else unlockScroll();
+        }
+      }).observe(dlg, { attributes: true });
+    });
+  }
+
   function wireEvents() {
+    wireDialogScrollLock();
     $("#searchForm").addEventListener("submit", (e) => e.preventDefault());
     $("#searchInput").addEventListener("input", (e) => {
       state.search = e.target.value;
@@ -513,9 +648,20 @@
     });
 
     document.body.addEventListener("click", (e) => {
-      const t = e.target.closest("[data-view],[data-add-detail],[data-size],[data-thumb],[data-step],[data-remove],[data-cstep]");
+      const t = e.target.closest("[data-view],[data-add-detail],[data-size],[data-thumb],[data-step],[data-remove],[data-cstep],[data-lightbox]");
       if (!t) return;
-      if (t.dataset.view) openProduct(t.dataset.view);
+      if (t.dataset.lightbox !== undefined) {
+        const lb = $("#imgLightbox");
+        $("#lightboxImg").src = t.src;
+        $("#lightboxImg").alt = t.alt;
+        if (!lb.open) lb.showModal();
+      } else if (t.dataset.remove) {
+        removeLine(t.dataset.remove, parseInt(t.dataset.size, 10));
+      } else if (t.dataset.cstep) {
+        const size = parseInt(t.dataset.size, 10);
+        const line = cartLine(t.dataset.id, size);
+        if (line) setQty(t.dataset.id, size, line.qty + Number(t.dataset.cstep));
+      } else if (t.dataset.view) openProduct(t.dataset.view);
       else if (t.dataset.size) {
         const dlg = $("#productDialog");
         const p = state.products.find((x) => x.id === dlg.dataset.pid);
@@ -526,6 +672,7 @@
           b.setAttribute("aria-pressed", String(b === t))
         );
         $("#pdPrice").textContent = money(unitPrice(p, size));
+        $("#pdMrp").textContent = discountPct(p) > 0 ? money(mrpPrice(p, size)) : "";
         $("#pdUnit").textContent = `for ${sizeLabel(p, size)} · ${rateLabel(p)}`;
         const inp = $("#pdQty");
         if (inp) {
@@ -547,12 +694,6 @@
         const inp = $("#pdQty");
         const cap = parseInt(inp.max, 10) || 99;
         inp.value = Math.max(1, Math.min(cap, (parseInt(inp.value, 10) || 1) + Number(t.dataset.step)));
-      } else if (t.dataset.remove) {
-        removeLine(t.dataset.remove, parseInt(t.dataset.size, 10));
-      } else if (t.dataset.cstep) {
-        const size = parseInt(t.dataset.size, 10);
-        const line = cartLine(t.dataset.id, size);
-        if (line) setQty(t.dataset.id, size, line.qty + Number(t.dataset.cstep));
       }
     });
 
@@ -566,10 +707,15 @@
     $("#drawerBackdrop").addEventListener("click", closeCart);
     $("#checkoutBtn").addEventListener("click", openCheckout);
     $("#checkoutForm").addEventListener("submit", submitCheckout);
+    $("#cf-state")?.addEventListener("input", renderCheckoutSummary);
 
     $$("dialog .dialog-close[data-close], dialog [data-close]").forEach((b) =>
       b.addEventListener("click", (e) => e.target.closest("dialog").close())
     );
+    $("#imgLightbox").addEventListener("click", (e) => {
+      if (e.target.id === "imgLightbox") e.target.close();
+    });
+    $("#lightboxImg").addEventListener("click", (e) => e.target.closest("dialog").close());
     $("#productDialog").addEventListener("close", () => {
       if (location.hash.startsWith("#/p/")) history.replaceState(null, "", location.pathname);
     });

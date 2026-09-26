@@ -54,9 +54,78 @@ export async function onRequestPost({ request, env }) {
     return json({ error: "Your cart is empty." }, 400);
   }
 
+  // --- Validate customer details before we ever touch Razorpay -----------------
+  const customerName = clean(customer.name, 120);
+  if (customerName.length < 2) {
+    return json({ error: "Please enter your full name." }, 400);
+  }
+  const phoneDigits = String(customer.phone ?? "").replace(/[^\d]/g, "");
+  const phone10 =
+    phoneDigits.length === 10
+      ? phoneDigits
+      : phoneDigits.length === 12 && phoneDigits.startsWith("91")
+      ? phoneDigits.slice(2)
+      : null;
+  if (!phone10 || !/^[6-9]\d{9}$/.test(phone10)) {
+    return json({ error: "Please enter a valid 10-digit Indian mobile number." }, 400);
+  }
+  const customerAddress = clean(customer.address, 400);
+  if (customerAddress.length < 12) {
+    return json({ error: "Please enter your full delivery address." }, 400);
+  }
+  const customerCity = clean(customer.city, 80);
+  if (customerCity.length < 2) {
+    return json({ error: "Please enter your city." }, 400);
+  }
+  const customerPincode = clean(customer.pincode, 10);
+  if (!/^\d{6}$/.test(customerPincode)) {
+    return json({ error: "Please enter a valid 6-digit PIN code." }, 400);
+  }
+
+  // --- Cross-check PIN code against city/state using India Post's public
+  // lookup, so a real (but mismatched) city/state/pincode combo gets caught.
+  // If the lookup service itself is unreachable, we don't block the order on
+  // a third-party outage - we just skip this specific check.
+  try {
+    const pinRes = await fetch(`https://api.postalpincode.in/pincode/${customerPincode}`, {
+      signal: AbortSignal.timeout(4000),
+    });
+    if (pinRes.ok) {
+      const pinData = await pinRes.json();
+      const status = pinData?.[0]?.Status;
+      if (status === "Error" || status === "404") {
+        return json({ error: "We couldn't find that PIN code. Please check it and try again." }, 400);
+      }
+      if (status === "Success") {
+        const offices = pinData[0].PostOffice || [];
+        if (offices.length === 0) {
+          return json({ error: "We couldn't find that PIN code. Please check it and try again." }, 400);
+        }
+        const cityLower = customerCity.toLowerCase();
+        const stateLower = clean(customer.state, 60).toLowerCase();
+        const stateOk = offices.some((o) => (o.State || "").toLowerCase() === stateLower);
+        const cityOk = offices.some((o) => {
+          const district = (o.District || "").toLowerCase();
+          const name = (o.Name || "").toLowerCase();
+          return district.includes(cityLower) || cityLower.includes(district) || name.includes(cityLower) || cityLower.includes(name);
+        });
+        if (!stateOk || !cityOk) {
+          return json(
+            { error: `Your city/state don't match PIN code ${customerPincode} (expected near ${offices[0].District}, ${offices[0].State}). Please check your address.` },
+            400
+          );
+        }
+      }
+      // Any other status (unexpected shape) falls through without blocking.
+    }
+  } catch {
+    // Lookup service unreachable - proceed without this specific check.
+  }
+
   // --- Recompute the total from the trusted price list -----------------------
   let amountPaise = 0;
   const lines = [];
+  const cartLines = [];
   for (const item of items) {
     const product = byId.get(item?.id);
     const qty = Math.floor(Number(item?.qty));
@@ -73,13 +142,40 @@ export async function onRequestPost({ request, env }) {
     if (typeof product.stockUnits === "number" && size * qty > product.stockUnits) {
       return json({ error: `Not enough stock for "${product.title}".` }, 400);
     }
-    amountPaise += Math.round(Number(product.ratePerUnit) * size * 100) * qty;
-    lines.push(`${qty}x ${product.title} (${size}${product.unit})`);
+    const unitRupees = product.priceOverrides && product.priceOverrides[size] != null
+      ? Number(product.priceOverrides[size])
+      : Number(product.ratePerUnit) * size;
+    amountPaise += Math.round(unitRupees * 100) * qty;
+    const sizeLabel = product.sizeLabels && product.sizeLabels[size] != null ? product.sizeLabels[size] : `${size}${product.unit}`;
+    lines.push(`${qty}x ${product.title} (${sizeLabel})`);
+    cartLines.push({ product, size, qty });
   }
 
   // --- Shipping ------------------------------------------------------------------
-  // Flat rate on every order. Prepaid only, no free-shipping threshold, no COD.
-  const shippingRupees = Number(site?.shipping?.flatRate ?? 0);
+  // Per-kg rate by the customer's state/zone (Karnataka cheapest, then South
+  // India, remote/Northeast dearest, everything else at the default rate),
+  // multiplied by the order's real weight. Real weight = selected size/volume
+  // (for weight-based products) plus each product's own packagingGrams,
+  // rounded to the nearest kg (min 1kg once the cart is non-empty).
+  const customerState = clean(customer.state, 60).toLowerCase();
+  if (!customerState) {
+    return json({ error: "Please enter your state so we can calculate shipping." }, 400);
+  }
+  const zones = Array.isArray(site?.shipping?.zones) ? site.shipping.zones : [];
+  const matchedZone = zones.find((zone) =>
+    (zone.states || []).some((z) => customerState.includes(z) || z.includes(customerState))
+  );
+  const ratePerKg = matchedZone ? Number(matchedZone.ratePerKg) || 0 : Number(site?.shipping?.defaultRatePerKg) || 0;
+
+  let cartWeightGrams = 0;
+  cartLines.forEach((line) => {
+    const isWeightBased = line.product.unit === "g" || line.product.unit === "ml";
+    const perUnitGrams = (isWeightBased ? line.size : 0) + (Number(line.product.packagingGrams) || 0);
+    cartWeightGrams += perUnitGrams * line.qty;
+  });
+  const cartWeightKg = cartWeightGrams / 1000;
+  const weightTier = cartWeightKg > 0 ? Math.max(1, Math.round(cartWeightKg)) : 0;
+  const shippingRupees = weightTier * ratePerKg;
   amountPaise += Math.round(shippingRupees * 100);
 
   if (amountPaise < 100) {
@@ -92,11 +188,11 @@ export async function onRequestPost({ request, env }) {
     currency: site?.currency || "INR",
     receipt: `rcpt_${Date.now()}`,
     notes: {
-      customer_name: clean(customer.name, 120),
-      phone: clean(customer.phone, 20),
+      customer_name: customerName,
+      phone: `+91${phone10}`,
       email: clean(customer.email, 120),
       address: clean(
-        [customer.address, customer.city, customer.state, customer.pincode]
+        [customerAddress, customerCity, customer.state, customer.pincode]
           .filter(Boolean)
           .join(", "),
         400

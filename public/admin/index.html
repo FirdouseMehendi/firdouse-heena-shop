@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin — Firdouse Heena</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="../images/brand/favicon.png" type="image/png" />
+<link rel="stylesheet" href="../assets/styles.css" />
+<style>
+  body::before { display: none; }
+  .admin-wrap { max-width: 880px; margin: 0 auto; padding: 28px 18px 60px; }
+  .admin-login { max-width: 320px; margin: 80px auto; display: flex; flex-direction: column; gap: 12px; }
+  .admin-login input { padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 1rem; }
+  .admin-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .admin-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .admin-tab { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: .85rem; font-weight: 600; color: var(--ink); }
+  .admin-tab[aria-pressed="true"] { background: var(--maroon); color: #fff; border-color: var(--maroon); }
+  .booking-card { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; padding: 14px 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .booking-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .booking-name { font-weight: 700; }
+  .status-badge { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 3px 9px; border-radius: 999px; }
+  .status-pending { background: #fdf0d5; color: #8a5a00; }
+  .status-confirmed { background: #e1f3e8; color: var(--ok); }
+  .status-rejected { background: #fbe4e2; color: var(--err); }
+  .status-completed { background: var(--sand); color: var(--maroon-dark); }
+  .booking-meta { font-size: .88rem; color: var(--muted); }
+  .booking-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  .booking-actions button { padding: 5px 12px; border-radius: 7px; border: 1px solid var(--line); background: #fff; font-size: .82rem; cursor: pointer; }
+  .booking-actions button:hover { border-color: var(--maroon); color: var(--maroon); }
+  .admin-empty { color: var(--muted); text-align: center; padding: 40px 0; }
+  .admin-error { color: var(--err); font-size: .88rem; }
+  .admin-views { display: flex; gap: 6px; margin-bottom: 18px; }
+  .admin-view-btn { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: .88rem; font-weight: 700; color: var(--ink); }
+  .admin-view-btn[aria-pressed="true"] { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .stat-card { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; padding: 14px; text-align: center; }
+  .stat-card .n { font-size: 1.5rem; font-weight: 800; color: var(--maroon); display: block; }
+  .stat-card .l { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+  .analytics-section { margin-bottom: 26px; }
+  .analytics-section h2 { font-size: 1rem; margin-bottom: 10px; }
+  .track-row { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 10px 12px; margin-bottom: 6px; font-size: .85rem; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .track-row .muted-small { color: var(--muted); font-size: .78rem; }
+</style>
+</head>
+<body>
+
+<div id="loginView" class="admin-wrap">
+  <form class="admin-login" id="loginForm">
+    <h1 style="text-align:center; font-size:1.2rem;">Firdouse Heena — Admin</h1>
+    <input type="password" id="passwordInput" placeholder="Admin password" autocomplete="current-password" required />
+    <button type="submit" class="btn btn-primary">Log in</button>
+    <p class="admin-error" id="loginError" hidden></p>
+  </form>
+</div>
+
+<div id="dashView" class="admin-wrap" hidden>
+  <div class="admin-head">
+    <h1 style="font-size:1.2rem; margin:0;">Firdouse Heena — Admin</h1>
+    <button class="btn btn-ghost" id="logoutBtn" type="button">Log out</button>
+  </div>
+  <div class="admin-views" id="views">
+    <button class="admin-view-btn" data-view="bookings" aria-pressed="true" type="button">Bookings</button>
+    <button class="admin-view-btn" data-view="analytics" type="button">Analytics</button>
+  </div>
+
+  <div id="bookingsView">
+    <div class="admin-tabs" id="tabs">
+      <button class="admin-tab" data-status="" aria-pressed="true" type="button">All</button>
+      <button class="admin-tab" data-status="pending" type="button">Pending</button>
+      <button class="admin-tab" data-status="confirmed" type="button">Confirmed</button>
+      <button class="admin-tab" data-status="rejected" type="button">Rejected</button>
+      <button class="admin-tab" data-status="completed" type="button">Completed</button>
+    </div>
+    <div id="list"></div>
+  </div>
+
+  <div id="analyticsView" hidden>
+    <div class="stat-row">
+      <div class="stat-card"><span class="n" id="statVisits">–</span><span class="l">Visits</span></div>
+      <div class="stat-card"><span class="n" id="statCartEvents">–</span><span class="l">Added to cart</span></div>
+      <div class="stat-card"><span class="n" id="statOrders">–</span><span class="l">Orders paid</span></div>
+      <div class="stat-card"><span class="n" id="statRevenue">–</span><span class="l">Revenue</span></div>
+    </div>
+    <div class="analytics-section">
+      <h2>Recent orders</h2>
+      <div id="ordersList"></div>
+    </div>
+    <div class="analytics-section">
+      <h2>Recent cart activity</h2>
+      <div id="cartList"></div>
+    </div>
+    <div class="analytics-section">
+      <h2>Recent visits</h2>
+      <div id="visitsList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (sel) => document.querySelector(sel);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  const money = (paise) => "₹" + Math.round((Number(paise) || 0) / 100).toLocaleString("en-IN");
+
+  const loginView = $("#loginView");
+  const dashView = $("#dashView");
+  const loginForm = $("#loginForm");
+  const loginError = $("#loginError");
+  const list = $("#list");
+  const tabs = $("#tabs");
+  const views = $("#views");
+  const bookingsView = $("#bookingsView");
+  const analyticsView = $("#analyticsView");
+  let currentStatus = "";
+
+  function showDash() {
+    loginView.hidden = true;
+    dashView.hidden = false;
+    loadBookings();
+  }
+
+  views.addEventListener("click", (e) => {
+    const btn = e.target.closest(".admin-view-btn");
+    if (!btn) return;
+    for (const b of views.querySelectorAll(".admin-view-btn")) b.setAttribute("aria-pressed", "false");
+    btn.setAttribute("aria-pressed", "true");
+    const view = btn.dataset.view;
+    bookingsView.hidden = view !== "bookings";
+    analyticsView.hidden = view !== "analytics";
+    if (view === "analytics") loadAnalytics();
+  });
+
+  function fmtRow(main, sub) {
+    return `<div class="track-row"><span>${main}</span><span class="muted-small">${sub}</span></div>`;
+  }
+
+  async function loadAnalytics() {
+    const res = await fetch("/api/admin/analytics").catch(() => null);
+    if (!res || res.status === 401) {
+      dashView.hidden = true;
+      loginView.hidden = false;
+      return;
+    }
+    const data = await res.json().catch(() => ({}));
+    const t = data.totals || {};
+    $("#statVisits").textContent = t.visits ?? "–";
+    $("#statCartEvents").textContent = t.cartEvents ?? "–";
+    $("#statOrders").textContent = t.orders ?? "–";
+    $("#statRevenue").textContent = money(t.revenuePaise);
+
+    const ordersList = $("#ordersList");
+    const orders = data.orders || [];
+    ordersList.innerHTML = orders.length
+      ? orders
+          .map((o) =>
+            fmtRow(
+              `<strong>${esc(o.customer_name || "—")}</strong> &middot; ${esc(o.customer_phone || "")} &middot; ${money(o.amount_paise)}`,
+              esc(o.created_at)
+            )
+          )
+          .join("")
+      : '<p class="admin-empty">No orders yet.</p>';
+
+    const cartList = $("#cartList");
+    const cartEvents = data.cartEvents || [];
+    cartList.innerHTML = cartEvents.length
+      ? cartEvents
+          .map((c) => fmtRow(`${esc(c.product_title)} &middot; qty ${esc(c.qty)}`, esc(c.created_at)))
+          .join("")
+      : '<p class="admin-empty">No cart activity yet.</p>';
+
+    const visitsList = $("#visitsList");
+    const visits = data.visits || [];
+    visitsList.innerHTML = visits.length
+      ? visits
+          .map((v) => fmtRow(esc(v.path), `${v.referrer ? esc(v.referrer) + " &middot; " : ""}${esc(v.created_at)}`))
+          .join("")
+      : '<p class="admin-empty">No visits logged yet.</p>';
+  }
+
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    loginError.hidden = true;
+    const password = $("#passwordInput").value;
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Login failed.");
+      showDash();
+    } catch (err) {
+      loginError.textContent = err.message;
+      loginError.hidden = false;
+    }
+  });
+
+  $("#logoutBtn").addEventListener("click", async () => {
+    await fetch("/api/admin/logout", { method: "POST" }).catch(() => {});
+    dashView.hidden = true;
+    loginView.hidden = false;
+  });
+
+  tabs.addEventListener("click", (e) => {
+    const btn = e.target.closest(".admin-tab");
+    if (!btn) return;
+    for (const t of tabs.querySelectorAll(".admin-tab")) t.setAttribute("aria-pressed", "false");
+    btn.setAttribute("aria-pressed", "true");
+    currentStatus = btn.dataset.status;
+    loadBookings();
+  });
+
+  const STATUS_ACTIONS = {
+    pending: [["confirmed", "Confirm"], ["rejected", "Reject"]],
+    confirmed: [["completed", "Mark completed"], ["rejected", "Reject"]],
+    rejected: [["pending", "Reopen"]],
+    completed: [],
+  };
+
+  function renderBooking(b) {
+    const card = document.createElement("div");
+    card.className = "booking-card";
+    const actions = (STATUS_ACTIONS[b.status] || [])
+      .map(([next, label]) => `<button type="button" data-id="${b.id}" data-next="${next}">${esc(label)}</button>`)
+      .join("");
+    card.innerHTML = `
+      <div class="booking-top">
+        <span class="booking-name">${esc(b.name)}</span>
+        <span class="status-badge status-${esc(b.status)}">${esc(b.status)}</span>
+      </div>
+      <div class="booking-meta">${esc(b.service)} &middot; ${esc(b.event_date)} &middot; ${esc(b.location)}${b.people ? ` &middot; ${esc(b.people)} people` : ""}</div>
+      <div class="booking-meta">📞 <a href="tel:${esc(b.phone)}">${esc(b.phone)}</a>${b.notes ? ` &middot; ${esc(b.notes)}` : ""}</div>
+      <div class="booking-meta" style="font-size:.78rem;">Submitted ${esc(b.created_at)}</div>
+      <div class="booking-actions">${actions}</div>`;
+    for (const btn of card.querySelectorAll("button[data-next]")) {
+      btn.addEventListener("click", () => updateStatus(btn.dataset.id, btn.dataset.next));
+    }
+    return card;
+  }
+
+  async function updateStatus(id, status) {
+    await fetch(`/api/admin/bookings/${id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ status }),
+    }).catch(() => {});
+    loadBookings();
+  }
+
+  async function loadBookings() {
+    list.innerHTML = "";
+    const qs = currentStatus ? `?status=${encodeURIComponent(currentStatus)}` : "";
+    const res = await fetch(`/api/admin/bookings${qs}`).catch(() => null);
+    if (!res || res.status === 401) {
+      dashView.hidden = true;
+      loginView.hidden = false;
+      return;
+    }
+    const data = await res.json().catch(() => ({}));
+    const bookings = data.bookings || [];
+    if (!bookings.length) {
+      list.innerHTML = '<p class="admin-empty">No booking enquiries here yet.</p>';
+      return;
+    }
+    for (const b of bookings) list.appendChild(renderBooking(b));
+  }
+
+  // If already logged in (cookie still valid), skip straight to the dashboard.
+  fetch("/api/admin/bookings").then((res) => {
+    if (res.ok) showDash();
+  }).catch(() => {});
+})();
+</script>
+</body>
+</html>

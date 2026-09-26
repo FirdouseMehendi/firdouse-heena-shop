@@ -1,7 +1,7 @@
 {
   "brand": "Firdouse Heena",
-  "tagline": "Natural henna & artist essentials",
-  "domain": "https://firdouseheena.pages.dev",
+  "tagline": "Heenapreneur Firdouse — Natural henna & artist essentials",
+  "domain": "https://firdoseproducts.pages.dev",
   "offerBanner": "Chemical-free bridal henna powder & oil — shipped across India",
   "hero": {
     "heading": "Happy shopping with Firdouse Heena",
@@ -10,17 +10,29 @@
     "image": "images/brand/logo-full.jpg"
   },
   "contact": {
-    "email": "[FILL IN your business email]",
-    "phone": "[FILL IN +91 phone number]",
-    "address": "[FILL IN full business address, city, state, PIN code]",
-    "instagram": "https://www.instagram.com/firdousehenna"
+    "email": "firdousehenna@gmail.com / firdouse.mehendi@gmail.com",
+    "phone": "+91 87925 48587",
+    "address": "Tumkur, Karnataka",
+    "instagram": "https://www.instagram.com/firdousehenna",
+    "facebook": "https://www.facebook.com/Firdousehenna"
   },
   "shipping": {
-    "flatRate": 59,
-    "note": "Flat ₹59 shipping on every order. Dispatched in 2–4 business days; delivery 3–8 business days across India. Prepaid only — no cash on delivery."
+    "defaultRatePerKg": 130,
+    "zones": [
+      { "name": "Karnataka", "ratePerKg": 80, "states": ["karnataka"] },
+      { "name": "South India", "ratePerKg": 100, "states": ["tamil nadu", "andhra pradesh", "telangana", "kerala", "puducherry"] },
+      { "name": "Remote areas", "ratePerKg": 180, "states": ["arunachal pradesh", "assam", "manipur", "meghalaya", "mizoram", "nagaland", "sikkim", "tripura", "jammu and kashmir", "ladakh", "andaman and nicobar islands", "lakshadweep"] }
+    ],
+    "note": "Shipping is ₹/kg based on your location and order weight — ₹80/kg within Karnataka, ₹100/kg for South India, ₹180/kg for remote/Northeast regions, ₹130/kg for the rest of India. Dispatched in 2–4 business days; delivery 3–8 business days. Prepaid only — no cash on delivery."
   },
   "currency": "INR",
   "categories": [
     "Henna Powder & Oils"
-  ]
+  ],
+  "booking": {
+    "enabled": true,
+    "services": ["Bridal Mehendi", "Party / Guest Mehendi", "Custom Mehendi"],
+    "note": "This is a booking ENQUIRY only — our artist will confirm availability, exact pricing and travel charges with you directly.",
+    "leadTimeNote": "Please enquire at least 7 days before your event date for bridal bookings."
+  }
 }

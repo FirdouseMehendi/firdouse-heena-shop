@@ -1,30 +1,490 @@
 [
   {
     "id": "bridal-henna-powder",
-    "title": "Bridal Henna Powder (7-Filter Sifted)",
+    "title": "Bridal Henna Powder (Triple Filter Sifted)",
     "category": "Henna Powder & Oils",
     "unit": "g",
-    "ratePerUnit": 0.5,
-    "sizes": [100, 250, 500, 1000],
+    "ratePerUnit": 0.39,
+    "sizes": [
+      100,
+      250,
+      500,
+      1000
+    ],
     "defaultSize": 250,
     "stockUnits": 20000,
     "packagingGrams": 40,
-    "badges": ["Bestseller"],
-    "images": ["images/products/powder-studio.jpg", "images/products/powder-cones-real.jpg"],
-    "description": "Bridal-grade henna, passed through seven filters to an ultra-fine sift - smooth, clog-free paste and a deep maroon bridal stain. Natural dye content only, no PPD, no additives. Pick your pack size below; priced by weight."
+    "badges": [
+      "Bestseller"
+    ],
+    "images": [
+      "images/products/powder-new.webp"
+    ],
+    "description": "Bridal-grade henna, passed through three filters to a fine sift - smooth, clog-free paste and a deep maroon bridal stain. Natural dye content only, no PPD, no additives. Pick your pack size below; priced by weight.",
+    "mrpPerUnit": 0.5
   },
   {
     "id": "bridal-henna-oil",
     "title": "Bridal Henna Oil (Stain Darkening)",
     "category": "Henna Powder & Oils",
     "unit": "ml",
-    "ratePerUnit": 1.5,
-    "sizes": [100, 250, 500, 1000],
+    "ratePerUnit": 1.2,
+    "sizes": [
+      100,
+      250,
+      500,
+      1000
+    ],
     "defaultSize": 250,
     "stockUnits": 10000,
     "packagingGrams": 120,
     "badges": [],
-    "images": ["images/products/oil-studio.jpg", "images/products/oil-bottle-real.jpg"],
-    "description": "Stain-darkening terping oil blend - high-cineole essential oils in a skin-safe base. Apply to skin before henna, or mix a few drops into the paste. Pick your bottle size below; priced by volume."
+    "images": [
+      "images/products/oil-new.webp"
+    ],
+    "description": "Stain-darkening terping oil blend - high-cineole essential oils in a skin-safe base. Apply to skin before henna, or mix a few drops into the paste. Pick your bottle size below; priced by volume.",
+    "mrpPerUnit": 1.5
+  },
+  {
+    "id": "henna-cones",
+    "title": "Hand-Rolled Bridal Henna Cones (Non-Peel)",
+    "category": "Henna Cones",
+    "unit": "pc",
+    "ratePerUnit": 30,
+    "sizes": [
+      4,
+      6
+    ],
+    "defaultSize": 4,
+    "stockUnits": 5000,
+    "packagingGrams": 30,
+    "badges": [
+      "Bestseller"
+    ],
+    "images": [
+      "images/products/bridal-cones-real.webp",
+      "images/products/bridal-cones-stain.webp"
+    ],
+    "description": "Ready-to-use, non-peel bridal mehendi cones, hand-rolled and filled fresh to order. Fine nozzle for clean, detailed linework. ₹30 per cone, sold only in packs of 4 or 6 - no single or double cone orders.",
+    "mrpPerUnit": 38
+  },
+  {
+    "id": "aftercare-balm",
+    "title": "Henna Aftercare Balm",
+    "category": "Aftercare",
+    "unit": "pc",
+    "ratePerUnit": 35,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 3000,
+    "packagingGrams": 20,
+    "badges": [],
+    "images": [
+      "images/products/aftercare-balm-real.webp"
+    ],
+    "description": "A clove and eucalyptus oil balm to seal your design once dry, for a deeper, longer-lasting stain. Gentle enough for daily reapplication. 15g jar - one flat price, no sizing needed.",
+    "mrpPerUnit": 45
+  },
+  {
+    "id": "aftercare-oil",
+    "title": "Henna Aftercare Oil (Roll-On)",
+    "category": "Aftercare",
+    "unit": "pc",
+    "ratePerUnit": 35,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 2000,
+    "packagingGrams": 30,
+    "badges": [],
+    "images": [
+      "images/products/aftercare-oil-real.webp"
+    ],
+    "description": "A nourishing roll-on aftercare oil - glide it on to keep the design moist and protected for a deeper, longer-lasting stain. 10ml roll-on bottle - one flat price, no sizing needed.",
+    "mrpPerUnit": 45
+  },
+  {
+    "id": "beginner-henna-kit",
+    "title": "Professional Henna Artist Kit",
+    "category": "Kits & Combos",
+    "unit": "kit",
+    "ratePerUnit": 999,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 300,
+    "packagingGrams": 350,
+    "badges": [
+      "Value pack"
+    ],
+    "images": [
+      "images/products/professional-kit-real3.webp"
+    ],
+    "description": "Everything a working henna artist needs in one box. Contains: Henna Powder (500g), Bridal Mehendi Oil (225ml), Weighing Scale (1), Bowl No. 3 / Medium (1), Big Silicone Spatula (1), Piping Bag (1), Cellophane Mixed - Frozen/Designer (5 pieces), Large Stockings (1), Cling Wrap (1 roll), Big Tape Dispenser (1), Big Cellotape (1), Measuring Cup Big (1), All Size Pins Pack - 0.38/0.45/0.5/0.7 (1 pack), Big Cutter (1), Piping Clip (1). One flat price - no sizing needed.",
+    "mrpPerUnit": 1500
+  },
+  {
+    "id": "mini-diy-henna-kit",
+    "title": "Mini DIY Henna Kit",
+    "category": "Kits & Combos",
+    "unit": "kit",
+    "ratePerUnit": 599,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 500,
+    "packagingGrams": 150,
+    "badges": [],
+    "images": [
+      "images/products/mini-kit-final.webp"
+    ],
+    "description": "A starter set for home use or first-time practice. Contains: Henna Powder (100g), Firdouse Bridal Oil (45ml), Weighing Scale (1), Silicone Spatula (1), Piping Bag (2 pieces), Cellophane Mixed - Frozen/Designer (5 pieces), Medium Bowl - 2 sizes (1), Precut Sheets (10), Stockings (1), Cutter (1), Big Tape Dispenser (1), Big Cellotape (1), Measuring Cup Big (1), All Size Pins Pack - 0.38/0.45/0.5/0.7 (1 pack), Piping Clip (1, free). One flat price - no sizing needed.",
+    "mrpPerUnit": 799
+  },
+  {
+    "id": "student-henna-kit",
+    "title": "Student Henna Kit",
+    "category": "Kits & Combos",
+    "unit": "kit",
+    "ratePerUnit": 299,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 500,
+    "packagingGrams": 100,
+    "badges": [],
+    "images": [
+      "images/products/student-kit-final.webp"
+    ],
+    "description": "A pocket-friendly kit for students and beginners just starting out. Contains: Henna Powder (50g), Firdouse Bridal Oil (25ml), Weighing Scale (1), Silicone Spatula (1), Piping Bags (2 pieces), Precut Sheets (10), Small Bowl - 2 sizes (1), 25m Full Cellosheet (1), Stockings (1), Cutter (1), Small Tape Dispenser (1), Small Cellotape (1), Measuring Cup Small (1), Mixed Pins Pack (1), Piping Clip (1), Baby Scissor (1, free). One flat price - no sizing needed.",
+    "mrpPerUnit": 399
+  },
+  {
+    "id": "practice-hand",
+    "title": "Acrylic Practice Hand",
+    "category": "Practice Tools",
+    "unit": "pc",
+    "ratePerUnit": 150,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 100,
+    "packagingGrams": 300,
+    "badges": [],
+    "images": [
+      "images/products/practice-hand-real.webp"
+    ],
+    "description": "A life-size acrylic practice hand for learning new designs before you take them to skin. Reusable, wipes clean with henna remover. One flat price - no sizing needed.",
+    "mrpPerUnit": 200
+  },
+  {
+    "id": "practice-leg",
+    "title": "Acrylic Practice Leg",
+    "category": "Practice Tools",
+    "unit": "pc",
+    "ratePerUnit": 160,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 100,
+    "packagingGrams": 300,
+    "badges": [],
+    "images": [
+      "images/products/practice-leg.webp"
+    ],
+    "description": "A life-size acrylic practice foot for learning bridal foot designs before you take them to skin. Reusable, wipes clean with henna remover. One flat price - no sizing needed.",
+    "mrpPerUnit": 170
+  },
+  {
+    "id": "cellophane-frozen-sheet",
+    "title": "Frozen-Effect Precut Cellophane Sheets (Pack of 100)",
+    "category": "Packaging & Sheets",
+    "unit": "pack",
+    "ratePerUnit": 70,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 100,
+    "packagingGrams": 800,
+    "badges": [],
+    "images": [
+      "images/products/cellophane-frozen-sheet.webp"
+    ],
+    "description": "A pretty frosted-floral precut cellophane sheet for wrapping henna cones or small gifts. Pack of 100 sheets. One flat price - no sizing needed.",
+    "mrpPerUnit": 90
+  },
+  {
+    "id": "cellophane-designer-sheet",
+    "title": "Designer Precut Cellophane Sheets (Pack of 100, Assorted)",
+    "category": "Packaging & Sheets",
+    "unit": "pack",
+    "ratePerUnit": 70,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 100,
+    "packagingGrams": 800,
+    "badges": [],
+    "images": [
+      "images/products/cellophane-designer-sheet.webp"
+    ],
+    "description": "Assorted floral-print precut cellophane packets for wrapping cones or gifting henna sets. Pack of 100 sheets. One flat price - no sizing needed.",
+    "mrpPerUnit": 90
+  },
+  {
+    "id": "application-stockings",
+    "title": "Mehendi Application Stockings (Pair)",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 40,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 200,
+    "packagingGrams": 60,
+    "badges": [],
+    "images": [
+      "images/products/application-stockings.webp"
+    ],
+    "description": "Soft stretch split-toe stockings to keep feet clean and comfortable during a full bridal henna session. Sold as a pair. One flat price - no sizing needed.",
+    "mrpPerUnit": 50
+  },
+  {
+    "id": "tape-dispenser-small",
+    "title": "Tape Dispenser (Small)",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 99,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 100,
+    "packagingGrams": 150,
+    "badges": [],
+    "images": [
+      "images/products/tape-dispenser-small.webp"
+    ],
+    "description": "A compact desktop tape dispenser for quick, clean cuts while packaging cones and orders. One flat price - no sizing needed.",
+    "mrpPerUnit": 129
+  },
+  {
+    "id": "tape-dispenser-big",
+    "title": "Tape Dispenser (Large)",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 149,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 100,
+    "packagingGrams": 250,
+    "badges": [],
+    "images": [
+      "images/products/tape-dispenser-big.webp"
+    ],
+    "description": "A sturdier, wider desktop tape dispenser for high-volume packaging days. One flat price - no sizing needed.",
+    "mrpPerUnit": 189
+  },
+  {
+    "id": "piping-clips-set3",
+    "title": "Piping Bag Sealing Clips (Set of 3)",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 49,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 300,
+    "packagingGrams": 40,
+    "badges": [],
+    "images": [
+      "images/products/piping-clips-set3.webp"
+    ],
+    "description": "Three reusable snap clips in different sizes to seal piping bags and keep henna paste fresh between uses. One flat price - no sizing needed.",
+    "mrpPerUnit": 65
+  },
+  {
+    "id": "cone-holder-stand",
+    "title": "Acrylic Cone Holder Stand",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 299,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 50,
+    "packagingGrams": 400,
+    "badges": [],
+    "images": [
+      "images/products/cone-holder-stand.webp"
+    ],
+    "description": "A two-tier acrylic stand that holds dozens of filled cones upright, keeping your workspace tidy while paste settles. One flat price - no sizing needed.",
+    "mrpPerUnit": 379
+  },
+  {
+    "id": "tape-roll-big",
+    "title": "Packaging Tape Roll (Wide)",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 45,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 300,
+    "packagingGrams": 100,
+    "badges": [],
+    "images": [
+      "images/products/tape-roll-big.webp"
+    ],
+    "description": "A wide roll of clear packaging tape for sealing parcels and boxes. Sold per roll. One flat price - no sizing needed.",
+    "mrpPerUnit": 59
+  },
+  {
+    "id": "tape-roll-small",
+    "title": "Packaging Tape Roll (Narrow)",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 25,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 300,
+    "packagingGrams": 60,
+    "badges": [],
+    "images": [
+      "images/products/tape-roll-small.webp"
+    ],
+    "description": "A narrow roll of clear tape for sealing cones, pouches and small packets. Sold per roll. One flat price - no sizing needed.",
+    "mrpPerUnit": 35
+  },
+  {
+    "id": "spatula-silicone",
+    "title": "Silicone Mixing Spatula",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 79,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 200,
+    "packagingGrams": 60,
+    "badges": [],
+    "images": [
+      "images/products/spatula-silicone.webp"
+    ],
+    "description": "A flexible silicone spatula for scraping every last bit of henna paste out of your mixing bowl. One flat price - no sizing needed.",
+    "mrpPerUnit": 99
+  },
+  {
+    "id": "measuring-cup",
+    "title": "Measuring Cup (100ml)",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 35,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 300,
+    "packagingGrams": 50,
+    "badges": [],
+    "images": [
+      "images/products/measuring-cup.webp"
+    ],
+    "description": "A clear graduated 100ml cup for measuring oils and liquids accurately while mixing henna paste. One flat price - no sizing needed.",
+    "mrpPerUnit": 45
+  },
+  {
+    "id": "digital-scale",
+    "title": "Digital Weighing Scale (10kg)",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 299,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 100,
+    "packagingGrams": 500,
+    "badges": [],
+    "images": [
+      "images/products/digital-scale.webp"
+    ],
+    "description": "A precise digital kitchen scale (up to 10kg, 1g accuracy) for weighing henna powder and packaging orders correctly. One flat price - no sizing needed.",
+    "mrpPerUnit": 399
+  },
+  {
+    "id": "empty-rollon-bottles",
+    "title": "Empty Roll-On Bottles (Pack of 6)",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 79,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 200,
+    "packagingGrams": 60,
+    "badges": [],
+    "images": [
+      "images/products/empty-rollon-bottles.webp"
+    ],
+    "description": "Small empty roll-on bottles for filling with your own henna oil blend or attar. Pack of 6. One flat price - no sizing needed.",
+    "mrpPerUnit": 99
+  },
+  {
+    "id": "empty-spray-bottles",
+    "title": "Empty Mini Spray Bottles (Pack of 5)",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "ratePerUnit": 69,
+    "sizes": [
+      1
+    ],
+    "defaultSize": 1,
+    "stockUnits": 200,
+    "packagingGrams": 60,
+    "badges": [],
+    "images": [
+      "images/products/empty-spray-bottles.webp"
+    ],
+    "description": "Small empty spray/atomizer bottles for filling with your own sealant spray or setting mist. Pack of 5. One flat price - no sizing needed.",
+    "mrpPerUnit": 89
+  },
+  {
+    "id": "piping-bags",
+    "title": "Piping / Cone Filling Bags (S/M/L)",
+    "category": "Supplies & Tools",
+    "unit": "pc",
+    "sizes": [1, 2, 3],
+    "defaultSize": 1,
+    "sizeLabels": { "1": "Small (16cm)", "2": "Medium (20cm)", "3": "Large (24cm)" },
+    "priceOverrides": { "1": 69, "2": 99, "3": 129 },
+    "mrpOverrides": { "1": 89, "2": 129, "3": 169 },
+    "stockUnits": 200,
+    "packagingGrams": 70,
+    "badges": [],
+    "images": [
+      "images/products/piping-bags-pack.webp"
+    ],
+    "description": "Disposable piping bags for filling henna cones cleanly and quickly - choose Small (16cm), Medium (20cm) or Large (24cm)."
   }
 ]

@@ -13,6 +13,13 @@
     const wrap = document.createElement("div");
     wrap.className = "fh-consultant";
     wrap.innerHTML = `
+      <div class="fh-nudge" id="fhNudge" hidden>
+        <button class="fh-nudge-close" type="button" aria-label="Dismiss">&times;</button>
+        <div class="fh-nudge-body">
+          <span class="fh-nudge-avatar" aria-hidden="true">🌿</span>
+          <p>Planning a henna look? Chat with our expert for free advice!</p>
+        </div>
+      </div>
       <button class="fh-consultant-fab" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="fhConsultantPanel">
         <span aria-hidden="true">🤍</span><span>Ask our Henna Expert</span>
       </button>
@@ -35,10 +42,12 @@
     const log = $("#fhConsultantLog", wrap);
     const form = $("#fhConsultantForm", wrap);
     const input = $("#fhConsultantInput", wrap);
+    const nudge = $("#fhNudge", wrap);
 
     function openPanel() {
       panel.hidden = false;
       fab.setAttribute("aria-expanded", "true");
+      hideNudge();
       if (!log.children.length) {
         addBubble(
           "assistant",
@@ -59,6 +68,38 @@
       if (e.key === "Escape" && !panel.hidden) closePanel();
     });
 
+    /* ---------------- proactive nudge bubble ---------------- */
+    const NUDGE_KEY = "fh_consultant_nudge_seen";
+    let nudgeTimer = null;
+    function hideNudge() {
+      nudge.hidden = true;
+      if (nudgeTimer) clearTimeout(nudgeTimer);
+    }
+    function showNudge() {
+      let seen = false;
+      try {
+        seen = sessionStorage.getItem(NUDGE_KEY) === "1";
+      } catch {}
+      if (seen || !panel.hidden) return;
+      nudge.hidden = false;
+      nudgeTimer = setTimeout(hideNudge, 12000);
+    }
+    try {
+      sessionStorage.setItem(NUDGE_KEY, "0");
+    } catch {}
+    nudge.addEventListener("click", (e) => {
+      if (e.target.closest(".fh-nudge-close")) {
+        hideNudge();
+        try {
+          sessionStorage.setItem(NUDGE_KEY, "1");
+        } catch {}
+        return;
+      }
+      hideNudge();
+      openPanel();
+    });
+    setTimeout(showNudge, 5000);
+
     function addBubble(role, text) {
       const bubble = document.createElement("div");
       bubble.className = `fh-bubble fh-bubble-${role}`;
@@ -66,6 +107,45 @@
       log.appendChild(bubble);
       log.scrollTop = log.scrollHeight;
       return bubble;
+    }
+
+    function addBookingCard(booking) {
+      if (!booking) return;
+      const box = document.createElement("div");
+      box.className = "fh-bubble fh-bubble-assistant fh-booking-card";
+      box.innerHTML = `
+        <div class="fh-rec-title">Booking enquiry</div>
+        <div class="fh-rec-meta">${esc(booking.service)} &middot; ${esc(booking.eventDate)}</div>
+        <div class="fh-rec-meta">${esc(booking.location)}${booking.people ? ` &middot; ${esc(booking.people)} people` : ""}</div>
+        <div class="fh-rec-meta">${esc(booking.name)} &middot; ${esc(booking.phone)}</div>
+        <div class="fh-booking-status"></div>`;
+      const statusEl = box.querySelector(".fh-booking-status");
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn btn-primary fh-rec-btn";
+      btn.textContent = "Confirm & send enquiry";
+      btn.addEventListener("click", async () => {
+        btn.disabled = true;
+        btn.textContent = "Sending…";
+        try {
+          const res = await fetch("api/book", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(booking),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || "Could not send enquiry.");
+          btn.remove();
+          statusEl.textContent = "Sent! Our artist will contact you on this number soon. 🌸";
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = "Confirm & send enquiry";
+          statusEl.textContent = err.message;
+        }
+      });
+      box.appendChild(btn);
+      log.appendChild(box);
+      log.scrollTop = log.scrollHeight;
     }
 
     function addRecommendations(recs) {
@@ -130,6 +210,7 @@
 
       addBubble("assistant", data.reply);
       addRecommendations(data.recommendations);
+      addBookingCard(data.booking);
       history.push({ role: "user", content: message });
       history.push({ role: "assistant", content: data.reply });
     });

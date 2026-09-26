@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Firdouse Heena — Natural henna &amp; artist essentials</title>
 <meta name="description" content="Chemical-free henna cones, powders, aftercare and artist supplies. Shipped across India. Secure card &amp; UPI checkout." />
-<link rel="canonical" href="https://firdouseheena.pages.dev/" />
+<link rel="canonical" href="https://firdoseproducts.pages.dev/" />
 <meta property="og:title" content="Firdouse Heena — Natural henna &amp; artist essentials" />
 <meta property="og:description" content="Chemical-free henna cones, powders, aftercare and artist supplies. Shipped across India." />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://firdouseheena.pages.dev/" />
-<meta property="og:image" content="https://firdouseheena.pages.dev/images/brand/logo-full.jpg" />
+<meta property="og:url" content="https://firdoseproducts.pages.dev/" />
+<meta property="og:image" content="https://firdoseproducts.pages.dev/images/brand/logo-full.jpg" />
 <meta name="theme-color" content="#1a2d11" />
 <link rel="icon" href="images/brand/favicon.png" type="image/png" />
 <link rel="apple-touch-icon" href="images/brand/apple-touch-icon.png" />
@@ -19,6 +19,7 @@
 <script defer src="assets/app.js"></script>
 <script defer src="assets/consultant.js"></script>
 <script defer src="assets/design-preview.js"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8009e88f9b464521b8a38ee31e280b8c"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
 <body>
 <a class="skip-link" href="#shop">Skip to products</a>
@@ -147,6 +148,11 @@
     </div>
   </section>
 
+  <section class="wrap about-founder" aria-labelledby="founderHeading">
+    <h2 id="founderHeading" class="center-heading">Meet Firdouse</h2>
+    <p class="muted center">Beyond henna, Firdouse is also an engineer and web developer, and has trained many students in web technologies. <a href="/about">Read more</a>.</p>
+  </section>
+
   <section class="wrap testimonials" aria-labelledby="testiHeading">
     <h2 id="testiHeading" class="center-heading">What Our Clients Say</h2>
     <div class="testi-grid">
@@ -183,6 +189,7 @@
     </div>
   </section>
 
+  <!-- Henna Design Gallery — temporarily removed, no images ready yet.
   <section id="design-preview" class="wrap design-preview" aria-labelledby="designPreviewHeading">
     <h2 id="designPreviewHeading" class="center-heading">Henna Design Gallery</h2>
     <p class="muted center">Pick a style — see a real design from Firdouse's own portfolio in that style.</p>
@@ -204,6 +211,7 @@
       <p class="muted small center">Real work by Firdouse — your exact design can be customised on the day. <a href="/contact">Book the real thing</a>.</p>
     </div>
   </section>
+  -->
 
 </main>
 
@@ -236,6 +244,9 @@
       <a class="social-btn" data-site="instagram" href="#" target="_blank" rel="noopener" aria-label="Instagram">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
       </a>
+      <a class="social-btn" data-site="contact.facebook" href="#" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 8.5h2V5.5h-2c-2 0-3.5 1.5-3.5 3.5v2H9.5v3H11.5V21h3v-7h2.2l.3-3H14.5V9c0-.3.2-.5.5-.5Z"/></svg>
+      </a>
     </div>
   </div>
   <div class="wrap footer-bottom">
@@ -253,6 +264,12 @@
 <dialog id="productDialog" class="dialog product-dialog" aria-label="Product details">
   <button class="dialog-close" data-close type="button" aria-label="Close">&times;</button>
   <div class="pd-body" id="pdBody"></div>
+</dialog>
+
+<!-- Product image lightbox -->
+<dialog class="lightbox" id="imgLightbox" aria-label="Image preview">
+  <button class="lightbox-close" data-close type="button" aria-label="Close image">&times;</button>
+  <img id="lightboxImg" alt="" />
 </dialog>
 
 <!-- Cart drawer -->
@@ -277,10 +294,10 @@
   <form id="checkoutForm" novalidate>
     <div class="field"><label for="cf-name">Full name</label><input id="cf-name" name="name" required autocomplete="name" /></div>
     <div class="row">
-      <div class="field"><label for="cf-phone">Phone</label><input id="cf-phone" name="phone" required inputmode="tel" autocomplete="tel" pattern="[0-9+ -]{8,15}" /></div>
+      <div class="field"><label for="cf-phone">Phone</label><input id="cf-phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="10-digit mobile number" maxlength="16" pattern="(\+?91[\-\s]?)?[6-9]\d{9}" title="Enter a valid 10-digit Indian mobile number" /></div>
       <div class="field"><label for="cf-email">Email</label><input id="cf-email" name="email" type="email" required autocomplete="email" /></div>
     </div>
-    <div class="field"><label for="cf-address">Address</label><textarea id="cf-address" name="address" rows="2" required autocomplete="street-address"></textarea></div>
+    <div class="field"><label for="cf-address">Address</label><textarea id="cf-address" name="address" rows="2" required autocomplete="street-address" minlength="12" placeholder="House/flat no., street, area" title="Enter your full delivery address (at least 12 characters)"></textarea></div>
     <div class="row">
       <div class="field"><label for="cf-city">City</label><input id="cf-city" name="city" required autocomplete="address-level2" /></div>
       <div class="field"><label for="cf-state">State</label><input id="cf-state" name="state" required autocomplete="address-level1" /></div>

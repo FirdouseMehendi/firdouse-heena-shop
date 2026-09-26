@@ -26,8 +26,13 @@ functions/api/
   verify-payment.js         checks the payment signature
   consult.js                AI henna consultant (chat widget on the site)
   order-care.js             AI personalized care tips after checkout
+  book.js                   saves a bridal/party booking enquiry to D1
+  admin/                    password-protected booking admin API
 functions/_shared/
   care-tips.js              care-tip text shared by consult.js + order-care.js
+  admin-auth.js             signed-cookie session helpers for the admin panel
+public/admin/index.html     the admin panel page (view/confirm/reject bookings)
+migrations/0001_bookings.sql  D1 schema for the bookings table
 .dev.vars.example           template for local secrets
 ```
 
@@ -133,6 +138,8 @@ Check:
 | `RAZORPAY_KEY_ID` | your `rzp_test_…` (switch to `rzp_live_…` when ready) |
 | `RAZORPAY_KEY_SECRET` | the matching secret |
 | `GROQ_API_KEY` | optional — turns on the AI henna consultant, see [section 11](#11-ai-henna-consultant-optional) |
+| `ADMIN_PASSWORD` | optional — needed for the admin panel, see [section 14](#14-bridal-booking-enquiries--admin-panel) |
+| `ADMIN_SESSION_SECRET` | optional — needed for the admin panel, see [section 14](#14-bridal-booking-enquiries--admin-panel) |
 
 Then **Deployments → Retry deployment** so the new values take effect. (Add the same variables under **Preview** if you want preview builds to take payments / AI chat too.)
 
@@ -188,6 +195,23 @@ This isn't an emailed receipt — sending to a customer's actual inbox needs a v
 ## 13. AI henna design preview
 
 A "Generate design" form (style + occasion) on the homepage that calls Pollinations' free, keyless image API (`public/assets/design-preview.js`) to generate a henna design **inspiration** image — not an overlay on the customer's own photo, just AI art matching their chosen style/occasion, with a clear disclaimer under the image. No API key or account needed; it's a direct client-side call to `image.pollinations.ai`.
+
+## 14. Bridal booking enquiries + admin panel
+
+The AI henna consultant (section 11) can also take **booking enquiries** for in-person bridal/party mehendi appointments — separate from mail-order products. Once it has collected a name, phone, service, event date and location, it shows a "Confirm & send enquiry" card in the chat; the customer confirms, and it's saved to a database. This never auto-confirms a booking — it's an enquiry for you to follow up on and accept/reject.
+
+**One-time setup:**
+1. Create the database: `npx wrangler d1 create firdouse-bookings`. It prints a `database_id` — paste it into `wrangler.toml` in place of `REPLACE_WITH_YOUR_D1_DATABASE_ID`.
+2. Apply the schema (creates the `bookings` table):
+   ```
+   npx wrangler d1 execute firdouse-bookings --file=migrations/0001_bookings.sql --remote
+   ```
+   (Also run it without `--remote` if you want the table locally for `npm run dev`.)
+3. On Cloudflare, also bind the database to your **Pages** project itself (D1 create only registers it account-wide): **Pages project → Settings → Functions → D1 database bindings** → add binding name `DB` → select `firdouse-bookings`.
+4. Add `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET` to Cloudflare (see table above) and to your local `.dev.vars` (pick any strong values — `ADMIN_SESSION_SECRET` just needs to be long and random, you never type it in).
+5. Redeploy. Visit `/admin`, log in with `ADMIN_PASSWORD`, and you'll see booking enquiries as they come in, with buttons to confirm / reject / mark completed.
+
+To change what services are offered or the booking disclaimer text, edit `booking` in `public/data/site.json`.
 
 ---
 

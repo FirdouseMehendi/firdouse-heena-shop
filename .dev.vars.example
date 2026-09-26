@@ -9,3 +9,7 @@ RAZORPAY_KEY_SECRET=xxxxxxxxxxxxxxxxxxxxxxxx
 # (console.groq.com/keys), no credit card required.
 # Optional — the shop works fine without it, the chat widget just stays off.
 GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Admin panel (/admin) — protects booking enquiries. Pick your own values.
+ADMIN_PASSWORD=choose-a-strong-password
+ADMIN_SESSION_SECRET=any-long-random-string-used-to-sign-login-cookies

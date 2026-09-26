@@ -33,8 +33,11 @@ function clean(str, max = MAX_MESSAGE_CHARS) {
 function catalogForPrompt() {
   return products
     .map((p) => {
-      const priceLow = (p.ratePerUnit * Math.min(...p.sizes)).toFixed(0);
-      const priceHigh = (p.ratePerUnit * Math.max(...p.sizes)).toFixed(0);
+      const priceAt = (size) =>
+        p.priceOverrides && p.priceOverrides[size] != null ? p.priceOverrides[size] : p.ratePerUnit * size;
+      const prices = p.sizes.map(priceAt);
+      const priceLow = Math.min(...prices).toFixed(0);
+      const priceHigh = Math.max(...prices).toFixed(0);
       return [
         `- id: ${p.id}`,
         `  title: ${p.title}`,
@@ -48,16 +51,34 @@ function catalogForPrompt() {
     .join("\n\n");
 }
 
-function systemPrompt() {
-  return `You are the AI henna consultant for "${site.brand}" (${site.tagline}), a small online henna shop shipping across India (flat ₹${site.shipping?.flatRate ?? 59} shipping, prepaid only).
+function bookingPrompt() {
+  if (!site.booking?.enabled) return "";
+  const services = site.booking.services?.join(", ") || "Bridal Mehendi";
+  return `
 
-Your job: help a visitor pick the right product(s) for their occasion/skin/preferences, and answer henna application & aftercare questions.
+You can also take BOOKING ENQUIRIES for in-person mehendi application (separate from mail-order products). Services offered: ${services}.
+
+Booking rules:
+- Collect these one or two at a time, conversationally: full name, phone number, service type, event date, event location (city/area), and number of people.
+- ${site.booking.note}
+- ${site.booking.leadTimeNote}
+- You never invent availability, pricing, or confirm a booking — you only collect enquiry details for our artist to follow up on.
+- Once you have ALL of: name, phone, service, event date, and location, restate the details back to the customer for confirmation, then end your reply with a final line, on its own, starting with "BOOKING:" followed by a JSON object like BOOKING: {"name":"Asha","phone":"9876543210","service":"Bridal Mehendi","eventDate":"2026-12-25","location":"Bangalore","people":2}. "people" is optional; omit it if not mentioned.
+- Omit the BOOKING: line entirely if any required field (name, phone, service, eventDate, location) is still missing — ask for the missing one(s) instead.
+- Never emit both a RECOMMEND: line and a BOOKING: line in the same reply.`;
+}
+
+function systemPrompt() {
+  return `You are the AI henna consultant for "${site.brand}" (${site.tagline}), a small online henna shop shipping across India. Shipping is charged per kg of the order's weight, at a rate that depends on the customer's state/zone (₹80/kg within Karnataka, ₹100/kg for South India, ₹180/kg for remote/Northeast regions, ₹${site.shipping?.defaultRatePerKg ?? 130}/kg for the rest of India), prepaid only.
+
+Your job: help a visitor pick the right product(s) for their occasion/skin/preferences, answer henna application & aftercare questions, and take booking enquiries for in-person mehendi appointments.
 
 PRODUCT CATALOG (the ONLY products that exist — never invent a product, id, price, or size not listed here):
 ${catalogForPrompt()}
 
 CARE TIPS you can draw on:
 ${CARE_TIPS}
+${bookingPrompt()}
 
 Rules:
 - Keep replies short and warm (2-5 sentences), like a helpful shop assistant, not a wall of text.
@@ -91,6 +112,34 @@ function extractRecommendations(text) {
     }
   }
   return { reply, recommendations };
+}
+
+function extractBooking(text) {
+  const match = text.match(/\nBOOKING:\s*(\{[\s\S]*\})\s*$/);
+  if (!match) return { reply: text.trim(), booking: null };
+
+  const reply = text.slice(0, match.index).trim();
+  let raw;
+  try {
+    raw = JSON.parse(match[1]);
+  } catch {
+    return { reply, booking: null };
+  }
+  if (!raw || typeof raw !== "object") return { reply, booking: null };
+
+  const name = clean(raw.name, 100);
+  const phone = clean(raw.phone, 20);
+  const service = clean(raw.service, 60);
+  const eventDate = clean(raw.eventDate, 20);
+  const location = clean(raw.location, 120);
+  const people = raw.people != null ? Math.max(1, Math.floor(Number(raw.people)) || 1) : null;
+  const validDate = /^\d{4}-\d{2}-\d{2}$/.test(eventDate) && !Number.isNaN(Date.parse(eventDate));
+
+  if (!name || !phone || !service || !location || !validDate) {
+    return { reply, booking: null };
+  }
+
+  return { reply, booking: { name, phone, service, eventDate, location, people } };
 }
 
 export async function onRequestPost({ request, env }) {
@@ -159,8 +208,9 @@ export async function onRequestPost({ request, env }) {
     return json({ error: "The AI consultant didn't respond. Please retry." }, 502);
   }
 
-  const { reply, recommendations } = extractRecommendations(text);
-  return json({ reply, recommendations });
+  const { reply: replyAfterRecs, recommendations } = extractRecommendations(text);
+  const { reply, booking } = extractBooking(replyAfterRecs);
+  return json({ reply, recommendations, booking });
 }
 
 export async function onRequestGet() {
