@@ -105,6 +105,24 @@
 
   const money = (paise) => "₹" + Math.round((Number(paise) || 0) / 100).toLocaleString("en-IN");
 
+  // D1 stores timestamps as UTC ("YYYY-MM-DD HH:MM:SS"); show them in India time.
+  function fmtIST(utcStr) {
+    if (!utcStr) return "";
+    const d = new Date(String(utcStr).replace(" ", "T") + "Z");
+    if (isNaN(d)) return esc(utcStr);
+    return (
+      d.toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }) + " IST"
+    );
+  }
+
   const loginView = $("#loginView");
   const dashView = $("#dashView");
   const loginForm = $("#loginForm");
@@ -158,7 +176,7 @@
           .map((o) =>
             fmtRow(
               `<strong>${esc(o.customer_name || "—")}</strong> &middot; ${esc(o.customer_phone || "")} &middot; ${money(o.amount_paise)}`,
-              esc(o.created_at)
+              fmtIST(o.created_at)
             )
           )
           .join("")
@@ -168,7 +186,7 @@
     const cartEvents = data.cartEvents || [];
     cartList.innerHTML = cartEvents.length
       ? cartEvents
-          .map((c) => fmtRow(`${esc(c.product_title)} &middot; qty ${esc(c.qty)}`, esc(c.created_at)))
+          .map((c) => fmtRow(`${esc(c.product_title)} &middot; qty ${esc(c.qty)}`, fmtIST(c.created_at)))
           .join("")
       : '<p class="admin-empty">No cart activity yet.</p>';
 
@@ -176,7 +194,7 @@
     const visits = data.visits || [];
     visitsList.innerHTML = visits.length
       ? visits
-          .map((v) => fmtRow(esc(v.path), `${v.referrer ? esc(v.referrer) + " &middot; " : ""}${esc(v.created_at)}`))
+          .map((v) => fmtRow(esc(v.path), `${v.referrer ? esc(v.referrer) + " &middot; " : ""}${fmtIST(v.created_at)}`))
           .join("")
       : '<p class="admin-empty">No visits logged yet.</p>';
   }
@@ -235,7 +253,7 @@
       </div>
       <div class="booking-meta">${esc(b.service)} &middot; ${esc(b.event_date)} &middot; ${esc(b.location)}${b.people ? ` &middot; ${esc(b.people)} people` : ""}</div>
       <div class="booking-meta">📞 <a href="tel:${esc(b.phone)}">${esc(b.phone)}</a>${b.notes ? ` &middot; ${esc(b.notes)}` : ""}</div>
-      <div class="booking-meta" style="font-size:.78rem;">Submitted ${esc(b.created_at)}</div>
+      <div class="booking-meta" style="font-size:.78rem;">Submitted ${fmtIST(b.created_at)}</div>
       <div class="booking-actions">${actions}</div>`;
     for (const btn of card.querySelectorAll("button[data-next]")) {
       btn.addEventListener("click", () => updateStatus(btn.dataset.id, btn.dataset.next));

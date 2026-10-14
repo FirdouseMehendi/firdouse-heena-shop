@@ -162,7 +162,7 @@
     "images": [
       "images/products/student-kit-final.webp"
     ],
-    "description": "A pocket-friendly kit for students and beginners just starting out. Contains: Henna Powder (50g), Firdouse Bridal Oil (25ml), Weighing Scale (1), Silicone Spatula (1), Piping Bags (2 pieces), Precut Sheets (10), Small Bowl - 2 sizes (1), 25m Full Cellosheet (1), Stockings (1), Cutter (1), Small Tape Dispenser (1), Small Cellotape (1), Measuring Cup Small (1), Mixed Pins Pack (1), Piping Clip (1), Baby Scissor (1, free). One flat price - no sizing needed.",
+    "description": "A pocket-friendly kit for students and beginners just starting out. Contains: Henna Powder (50g), Bridal Mehendi Oil (25ml), Mixing Bowl (1 piece), Measuring Cup Small (1 piece), Piping Bags (2 pieces), 25m Full Cellosheet (1 roll), Precut Sheets (10 pieces), Stockings (1 piece), Silicone Spatula (1 piece), Small Tape Dispenser (1), Small Cellotape (1 piece), Cutter (1 piece), Mixed Pins Pack (1 piece), Piping Clip (1 piece), Baby Scissor (1 piece, free). One flat price - no sizing needed.",
     "mrpPerUnit": 399
   },
   {
@@ -208,7 +208,7 @@
     "title": "Frozen-Effect Precut Cellophane Sheets (Pack of 100)",
     "category": "Packaging & Sheets",
     "unit": "pack",
-    "ratePerUnit": 70,
+    "ratePerUnit": 80,
     "sizes": [
       1
     ],
@@ -243,22 +243,25 @@
   },
   {
     "id": "application-stockings",
-    "title": "Mehendi Application Stockings (Pair)",
+    "title": "Henna Paste Straining Stockings (Pair)",
     "category": "Supplies & Tools",
     "unit": "pc",
-    "ratePerUnit": 40,
-    "sizes": [
-      1
-    ],
+    "sizes": [1, 2],
     "defaultSize": 1,
+    "sizeLabels": { "1": "Regular", "2": "Large" },
+    "priceOverrides": { "1": 40, "2": 65 },
+    "mrpOverrides": { "1": 50, "2": 80 },
     "stockUnits": 200,
     "packagingGrams": 60,
     "badges": [],
     "images": [
-      "images/products/application-stockings.webp"
+      "images/products/stockings-real.webp"
     ],
-    "description": "Soft stretch split-toe stockings to keep feet clean and comfortable during a full bridal henna session. Sold as a pair. One flat price - no sizing needed.",
-    "mrpPerUnit": 50
+    "sizeImages": {
+      "1": ["images/products/stockings-real.webp"],
+      "2": ["images/products/stockings-large-black.webp"]
+    },
+    "description": "Soft stretch stockings used to strain freshly mixed henna paste - pour the paste through to catch dirt and grit before filling your cones, for a smoother, clog-free paste. Choose Regular or Large. Sold as a pair."
   },
   {
     "id": "tape-dispenser-small",
@@ -338,7 +341,7 @@
   },
   {
     "id": "tape-roll-big",
-    "title": "Packaging Tape Roll (Wide)",
+    "title": "Packaging Tape Roll - Big (1 inch)",
     "category": "Supplies & Tools",
     "unit": "pc",
     "ratePerUnit": 45,
@@ -352,12 +355,12 @@
     "images": [
       "images/products/tape-roll-big.webp"
     ],
-    "description": "A wide roll of clear packaging tape for sealing parcels and boxes. Sold per roll. One flat price - no sizing needed.",
+    "description": "A 1-inch wide roll of clear packaging tape for sealing parcels and boxes. Sold per roll. One flat price - no sizing needed.",
     "mrpPerUnit": 59
   },
   {
     "id": "tape-roll-small",
-    "title": "Packaging Tape Roll (Narrow)",
+    "title": "Packaging Tape Roll - Small",
     "category": "Supplies & Tools",
     "unit": "pc",
     "ratePerUnit": 25,
@@ -371,7 +374,7 @@
     "images": [
       "images/products/tape-roll-small.webp"
     ],
-    "description": "A narrow roll of clear tape for sealing cones, pouches and small packets. Sold per roll. One flat price - no sizing needed.",
+    "description": "A small roll of clear tape for sealing cones, pouches and small packets. Sold per roll. One flat price - no sizing needed.",
     "mrpPerUnit": 35
   },
   {

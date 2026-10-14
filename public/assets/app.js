@@ -220,13 +220,19 @@
   }
 
   /* ---------------- product quick view ---------------- */
+  function imagesForSize(p, size) {
+    const bySize = p.sizeImages?.[size];
+    const list = (bySize?.length ? bySize : p.images) || [];
+    return list.length ? list : ["images/products/placeholder.svg"];
+  }
+
   function openProduct(id) {
     const p = state.products.find((x) => x.id === id);
     if (!p) return;
     const dlg = $("#productDialog");
-    const imgs = p.images?.length ? p.images : ["images/products/placeholder.svg"];
     const soldOut = typeof p.stockUnits === "number" && p.stockUnits <= 0;
     const dSize = defaultSizeOf(p);
+    const imgs = imagesForSize(p, dSize);
     $("#pdBody").innerHTML = `
       <img class="pd-media" id="pdMain" src="${imgs[0]}" alt="${escapeAttr(p.title)}" data-lightbox />
       ${imgs.length > 1 ? `<div class="pd-thumbs">${imgs.map((s, i) => `<img src="${s}" alt="View ${i + 1}" data-thumb="${s}" ${i === 0 ? 'aria-current="true"' : ""} />`).join("")}</div>` : ""}
@@ -674,6 +680,16 @@
         $("#pdPrice").textContent = money(unitPrice(p, size));
         $("#pdMrp").textContent = discountPct(p) > 0 ? money(mrpPrice(p, size)) : "";
         $("#pdUnit").textContent = `for ${sizeLabel(p, size)} · ${rateLabel(p)}`;
+        if (p.sizeImages?.[size]) {
+          const imgs = imagesForSize(p, size);
+          $("#pdMain").src = imgs[0];
+          const thumbs = $(".pd-thumbs", dlg);
+          if (thumbs) {
+            thumbs.innerHTML = imgs
+              .map((s, i) => `<img src="${s}" alt="View ${i + 1}" data-thumb="${s}" ${i === 0 ? 'aria-current="true"' : ""} />`)
+              .join("");
+          }
+        }
         const inp = $("#pdQty");
         if (inp) {
           inp.max = String(Math.max(1, maxPacks(p, size)));
