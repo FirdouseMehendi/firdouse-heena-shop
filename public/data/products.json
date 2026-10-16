@@ -74,6 +74,7 @@
     "category": "Henna Cones",
     "unit": "g",
     "ratePerUnit": 1.3,
+    "mrpPerUnit": 1.7,
     "sizes": [
       500,
       1000,
