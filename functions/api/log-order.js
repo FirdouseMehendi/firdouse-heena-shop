@@ -29,7 +29,7 @@ export async function onRequestPost({ request, env }) {
 
   const itemsJson = clean(JSON.stringify(payload?.items ?? []), 2000);
   const customerName = clean(payload?.customer_name, 120);
-  const customerPhone = clean(payload?.customer_phone, 20);
+  const customerPhone = clean(payload?.customer_phone, 45);
   const customerEmail = clean(payload?.customer_email, 120);
 
   await env.DB.prepare(

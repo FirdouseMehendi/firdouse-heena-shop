@@ -529,7 +529,7 @@
               amount_paise: order.amount,
               items: order.lines,
               customer_name: customer.name,
-              customer_phone: customer.phone,
+              customer_phone: customer.altPhone ? `${customer.phone} / alt ${customer.altPhone}` : customer.phone,
               customer_email: customer.email,
             }),
           }).catch(() => {});

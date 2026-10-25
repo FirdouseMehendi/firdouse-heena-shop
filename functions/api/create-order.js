@@ -69,6 +69,20 @@ export async function onRequestPost({ request, env }) {
   if (!phone10 || !/^[6-9]\d{9}$/.test(phone10)) {
     return json({ error: "Please enter a valid 10-digit Indian mobile number." }, 400);
   }
+  // Optional alternative number (e.g. for the courier) — validated only if given.
+  const altDigits = String(customer.altPhone ?? "").replace(/[^\d]/g, "");
+  let altPhone10 = "";
+  if (altDigits) {
+    altPhone10 =
+      altDigits.length === 10
+        ? altDigits
+        : altDigits.length === 12 && altDigits.startsWith("91")
+        ? altDigits.slice(2)
+        : "";
+    if (!/^[6-9]\d{9}$/.test(altPhone10)) {
+      return json({ error: "Please enter a valid 10-digit alternative mobile number, or leave it blank." }, 400);
+    }
+  }
   const customerAddress = clean(customer.address, 400);
   if (customerAddress.length < 12) {
     return json({ error: "Please enter your full delivery address." }, 400);
@@ -190,6 +204,7 @@ export async function onRequestPost({ request, env }) {
     notes: {
       customer_name: customerName,
       phone: `+91${phone10}`,
+      alt_phone: altPhone10 ? `+91${altPhone10}` : "",
       email: clean(customer.email, 120),
       address: clean(
         [customerAddress, customerCity, customer.state, customer.pincode]
