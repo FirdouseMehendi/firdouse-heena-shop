@@ -29,7 +29,10 @@ function customerHtml(o, n, paymentId) {
     .join("");
   const total = (o.amount / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   return `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1f2a1f">
-  <h2 style="color:#1f3d2b;margin-bottom:4px">Firdouse Mehendi Products</h2>
+  <div style="text-align:center;padding:8px 0 4px">
+    <img src="https://firdoseproducts.pages.dev/images/brand/logo.png" alt="Firdouse Mehendi Products" width="90" height="90" style="display:block;margin:0 auto 6px;border-radius:50%">
+    <h2 style="color:#1f3d2b;margin:0">Firdouse Mehendi Products</h2>
+  </div>
   <p style="font-size:18px;margin:16px 0 4px">Thank you, ${esc(n.customer_name)}! Your order is confirmed.</p>
   <p style="color:#555;margin:0 0 16px">We have received your payment and will pack your order soon.</p>
   <div style="background:#f3f6ee;border-radius:10px;padding:14px 16px;margin-bottom:16px">
