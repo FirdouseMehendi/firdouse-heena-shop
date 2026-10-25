@@ -28,6 +28,24 @@ function clean(str, max = 200) {
   return String(str ?? "").replace(/\s+/g, " ").trim().slice(0, max);
 }
 
+// Tolerates small typos (e.g. "maharastra" vs "maharashtra"): edit distance <= 2.
+function similar(a, b) {
+  a = a.replace(/[^a-z]/g, "");
+  b = b.replace(/[^a-z]/g, "");
+  if (!a || !b) return false;
+  if (a === b) return true;
+  if (Math.abs(a.length - b.length) > 2) return false;
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[b.length] <= 2;
+}
+
 export async function onRequestPost({ request, env }) {
   const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } = env;
   if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
@@ -117,11 +135,11 @@ export async function onRequestPost({ request, env }) {
         }
         const cityLower = customerCity.toLowerCase();
         const stateLower = clean(customer.state, 60).toLowerCase();
-        const stateOk = offices.some((o) => (o.State || "").toLowerCase() === stateLower);
+        const stateOk = offices.some((o) => similar((o.State || "").toLowerCase(), stateLower));
         const cityOk = offices.some((o) => {
           const district = (o.District || "").toLowerCase();
           const name = (o.Name || "").toLowerCase();
-          return district.includes(cityLower) || cityLower.includes(district) || name.includes(cityLower) || cityLower.includes(name);
+          return district.includes(cityLower) || cityLower.includes(district) || name.includes(cityLower) || cityLower.includes(name) || similar(district, cityLower);
         });
         if (!stateOk || !cityOk) {
           return json(
