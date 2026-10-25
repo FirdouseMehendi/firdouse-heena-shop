@@ -3,8 +3,6 @@
 //   expected = HMAC_SHA256(razorpay_order_id + "|" + razorpay_payment_id, RAZORPAY_KEY_SECRET)
 // Returns { ok: true } only when expected === razorpay_signature.
 
-import { sendOrderEmails } from "../_shared/order-email.js";
-
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -26,7 +24,7 @@ function safeEqual(a, b) {
   return diff === 0;
 }
 
-export async function onRequestPost({ request, env, waitUntil }) {
+export async function onRequestPost({ request, env }) {
   const { RAZORPAY_KEY_SECRET } = env;
   if (!RAZORPAY_KEY_SECRET) {
     return json({ ok: false, error: "Payments are not configured." }, 500);
@@ -63,11 +61,6 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (!safeEqual(expected, signature)) {
     return json({ ok: false, error: "Signature mismatch." }, 400);
   }
-
-  // Confirmation emails (no-op unless Brevo is configured); never blocks the payment result.
-  const mail = sendOrderEmails(env, { orderId, paymentId });
-  if (typeof waitUntil === "function") waitUntil(mail);
-  else await mail;
 
   return json({ ok: true, payment_id: paymentId, order_id: orderId });
 }
