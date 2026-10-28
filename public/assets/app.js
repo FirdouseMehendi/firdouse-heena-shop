@@ -733,6 +733,19 @@
     $("#checkoutForm").addEventListener("submit", submitCheckout);
     $("#cf-state")?.addEventListener("input", renderCheckoutSummary);
     $("#cf-city")?.addEventListener("input", renderCheckoutSummary);
+    // Typing a 6-digit PIN fills city + state automatically (editable afterwards).
+    $("#cf-pincode")?.addEventListener("input", async (e) => {
+      const pin = e.target.value.trim();
+      if (!/^\d{6}$/.test(pin)) return;
+      try {
+        const r = await fetch(`/api/pincode?pin=${pin}`);
+        const d = await r.json();
+        if (!d.ok || $("#cf-pincode").value.trim() !== pin) return;
+        $("#cf-city").value = d.city;
+        $("#cf-state").value = d.state;
+        renderCheckoutSummary();
+      } catch {}
+    });
 
     $$("dialog .dialog-close[data-close], dialog [data-close]").forEach((b) =>
       b.addEventListener("click", (e) => e.target.closest("dialog").close())
