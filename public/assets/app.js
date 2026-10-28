@@ -324,9 +324,12 @@
   }
   // Returns the zone shipping rate for a typed state name, or null if the
   // state is blank/unrecognised (caller shows "calculated at checkout").
-  function ratePerKgForState(stateRaw) {
+  function ratePerKgForState(stateRaw, cityRaw) {
     const s = String(stateRaw || "").trim().toLowerCase();
     if (!s) return null;
+    const c = String(cityRaw || "").trim().toLowerCase();
+    const cityHit = (state.site.shipping?.cityRates || []).find((x) => (x.cities || []).includes(c));
+    if (cityHit) return Number(cityHit.ratePerKg) || 0;
     const zones = state.site.shipping?.zones || [];
     for (const zone of zones) {
       if ((zone.states || []).some((z) => s.includes(z) || z.includes(s))) return Number(zone.ratePerKg) || 0;
@@ -344,9 +347,9 @@
     });
     return grams / 1000;
   }
-  function shippingFor(sub, stateRaw) {
+  function shippingFor(sub, stateRaw, cityRaw) {
     if (sub <= 0) return 0;
-    const ratePerKg = ratePerKgForState(stateRaw);
+    const ratePerKg = ratePerKgForState(stateRaw, cityRaw);
     if (ratePerKg == null) return null;
     const kg = cartWeightKg();
     const tier = kg > 0 ? Math.max(1, Math.round(kg)) : 0;
@@ -421,7 +424,11 @@
     if (!lines.length) return;
     const sub = subtotal();
     const stateVal = $("#cf-state")?.value || "";
-    const ship = shippingFor(sub, stateVal);
+    const cityVal = $("#cf-city")?.value || "";
+    const ship = shippingFor(sub, stateVal, cityVal);
+    const kg = cartWeightKg();
+    const billedKg = kg > 0 ? Math.max(1, Math.round(kg)) : 0;
+    const weightRow = `<div class="li"><span class="muted">Total weight</span><span class="muted">${kg.toFixed(2)} kg · billed ${billedKg} kg</span></div>`;
     const shipRow =
       ship == null
         ? `<div class="li"><span>Shipping</span><span class="muted">Enter your state below</span></div>`
@@ -434,6 +441,7 @@
         )
         .join("") +
       shipRow +
+      weightRow +
       `<div class="li tot"><span>Total</span><span>${money(sub + (ship || 0))}</span></div>`;
   }
   function openCheckout() {
@@ -724,6 +732,7 @@
     $("#checkoutBtn").addEventListener("click", openCheckout);
     $("#checkoutForm").addEventListener("submit", submitCheckout);
     $("#cf-state")?.addEventListener("input", renderCheckoutSummary);
+    $("#cf-city")?.addEventListener("input", renderCheckoutSummary);
 
     $$("dialog .dialog-close[data-close], dialog [data-close]").forEach((b) =>
       b.addEventListener("click", (e) => e.target.closest("dialog").close())

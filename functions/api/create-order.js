@@ -197,7 +197,13 @@ export async function onRequestPost({ request, env }) {
   const matchedZone = zones.find((zone) =>
     (zone.states || []).some((z) => customerState.includes(z) || z.includes(customerState))
   );
-  const ratePerKg = matchedZone ? Number(matchedZone.ratePerKg) || 0 : Number(site?.shipping?.defaultRatePerKg) || 0;
+  const cityLower = customerCity.toLowerCase();
+  const matchedCity = (site?.shipping?.cityRates || []).find((c) => (c.cities || []).includes(cityLower));
+  const ratePerKg = matchedCity
+    ? Number(matchedCity.ratePerKg) || 0
+    : matchedZone
+    ? Number(matchedZone.ratePerKg) || 0
+    : Number(site?.shipping?.defaultRatePerKg) || 0;
 
   let cartWeightGrams = 0;
   cartLines.forEach((line) => {

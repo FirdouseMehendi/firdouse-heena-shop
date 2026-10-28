@@ -18,12 +18,15 @@
   },
   "shipping": {
     "defaultRatePerKg": 130,
+    "cityRates": [
+      { "name": "Hyderabad", "ratePerKg": 138, "cities": ["hyderabad", "secunderabad"] }
+    ],
     "zones": [
       { "name": "Karnataka", "ratePerKg": 90, "states": ["karnataka"] },
       { "name": "South India", "ratePerKg": 100, "states": ["tamil nadu", "andhra pradesh", "telangana", "kerala", "puducherry"] },
       { "name": "Remote areas", "ratePerKg": 180, "states": ["arunachal pradesh", "assam", "manipur", "meghalaya", "mizoram", "nagaland", "sikkim", "tripura", "jammu and kashmir", "ladakh", "andaman and nicobar islands", "lakshadweep"] }
     ],
-    "note": "Shipping starts at ₹90 and is calculated per kg based on your location and order weight — ₹90/kg within Karnataka, ₹100/kg for South India, ₹180/kg for remote/Northeast regions, ₹130/kg for the rest of India. Dispatched in 2–4 business days; delivery 3–8 business days. Prepaid only — no cash on delivery."
+    "note": "Shipping starts at ₹90 and is calculated per kg based on your location and order weight — ₹90/kg within Karnataka, ₹100/kg for South India, ₹180/kg for remote/Northeast regions, ₹130/kg for the rest of India (Hyderabad ₹138/kg). Dispatched in 2–4 business days; delivery 3–8 business days. Prepaid only — no cash on delivery."
   },
   "currency": "INR",
   "categories": [
