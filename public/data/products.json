@@ -74,13 +74,14 @@
     "category": "Henna Cones",
     "unit": "pc",
     "ratePerUnit": 30,
-    "sizes": [4, 6],
-    "defaultSize": 4,
+    "sizes": [1],
+    "sizeLabels": { "1": "1 cone" },
+    "defaultSize": 1,
     "stockUnits": 2000,
     "packagingGrams": 25,
     "badges": ["New"],
     "images": ["images/products/nail-cones-floral.webp", "images/products/nail-cones-result.webp"],
-    "description": "Made only for fingernails and toenails. Each cone holds about 18-19 g of ready-to-use paste. For the best result, apply the paste 2 times. Not for skin designs. ₹30 per cone, sold only in packs of 4 or 6 - no single cone orders."
+    "description": "Made only for fingernails and toenails. Each cone holds about 18-19 g of ready-to-use paste. For the best result, apply the paste 2 times. Not for skin designs. ₹30 per cone - order as many cones as you need."
   },
   {
     "id": "bridal-mehendi-paste-500g",
