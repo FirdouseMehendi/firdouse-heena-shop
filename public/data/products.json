@@ -51,11 +51,9 @@
     "category": "Henna Cones",
     "unit": "pc",
     "ratePerUnit": 30,
-    "sizes": [
-      4,
-      6
-    ],
-    "defaultSize": 4,
+    "sizes": [1],
+    "sizeLabels": { "1": "1 cone" },
+    "defaultSize": 1,
     "stockUnits": 5000,
     "packagingGrams": 30,
     "badges": [
@@ -65,7 +63,7 @@
       "images/products/bridal-cones-real.webp",
       "images/products/bridal-cones-stain.webp"
     ],
-    "description": "Ready-to-use, non-peel bridal mehendi cones, hand-rolled and filled fresh to order. Fine nozzle for clean, detailed linework. ₹30 per cone, sold only in packs of 4 or 6 - no single or double cone orders.",
+    "description": "Ready-to-use, non-peel bridal mehendi cones, hand-rolled and filled fresh to order. Fine nozzle for clean, detailed linework. ₹30 per cone, order as many cones as you need.",
     "mrpPerUnit": 38
   },
   {
