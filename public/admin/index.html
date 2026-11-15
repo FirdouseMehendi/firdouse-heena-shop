@@ -62,6 +62,7 @@
   <div class="admin-views" id="views">
     <button class="admin-view-btn" data-view="bookings" aria-pressed="true" type="button">Bookings</button>
     <button class="admin-view-btn" data-view="analytics" type="button">Analytics</button>
+    <button class="admin-view-btn" data-view="cart" type="button">Cart activity</button>
   </div>
 
   <div id="bookingsView">
@@ -87,16 +88,27 @@
       <div id="ordersList"></div>
     </div>
     <div class="analytics-section">
-      <h2>Recent cart activity</h2>
-      <div id="cartList"></div>
-    </div>
-    <div class="analytics-section">
       <h2>Where visitors are from</h2>
       <div id="locationsList"></div>
     </div>
     <div class="analytics-section">
       <h2>Recent visits</h2>
       <div id="visitsList"></div>
+    </div>
+  </div>
+
+  <div id="cartView" hidden>
+    <div class="stat-row">
+      <div class="stat-card"><span class="n" id="statCartTotal">–</span><span class="l">Added to cart</span></div>
+      <div class="stat-card"><span class="n" id="statCartUnits">–</span><span class="l">Units added</span></div>
+    </div>
+    <div class="analytics-section">
+      <h2>Most added products</h2>
+      <div id="cartTopList"></div>
+    </div>
+    <div class="analytics-section">
+      <h2>Recent cart activity</h2>
+      <div id="cartList"></div>
     </div>
   </div>
 </div>
@@ -136,6 +148,7 @@
   const views = $("#views");
   const bookingsView = $("#bookingsView");
   const analyticsView = $("#analyticsView");
+  const cartView = $("#cartView");
   let currentStatus = "";
 
   function showDash() {
@@ -152,7 +165,8 @@
     const view = btn.dataset.view;
     bookingsView.hidden = view !== "bookings";
     analyticsView.hidden = view !== "analytics";
-    if (view === "analytics") loadAnalytics();
+    cartView.hidden = view !== "cart";
+    if (view === "analytics" || view === "cart") loadAnalytics();
   });
 
   function fmtRow(main, sub) {
@@ -188,6 +202,19 @@
 
     const cartList = $("#cartList");
     const cartEvents = data.cartEvents || [];
+    $("#statCartTotal").textContent = t.cartEvents ?? "–";
+    $("#statCartUnits").textContent = cartEvents.reduce((n, c) => n + (Number(c.qty) || 0), 0);
+    const byProduct = {};
+    for (const c of cartEvents) {
+      const k = c.product_title;
+      byProduct[k] = byProduct[k] || { adds: 0, qty: 0 };
+      byProduct[k].adds += 1;
+      byProduct[k].qty += Number(c.qty) || 0;
+    }
+    const top = Object.entries(byProduct).sort((a, b) => b[1].adds - a[1].adds).slice(0, 8);
+    $("#cartTopList").innerHTML = top.length
+      ? top.map(([title, v]) => fmtRow(esc(title), `${v.adds} add${v.adds === 1 ? "" : "s"} &middot; ${v.qty} units`)).join("")
+      : '<p class="admin-empty">No cart activity yet.</p>';
     cartList.innerHTML = cartEvents.length
       ? cartEvents
           .map((c) => fmtRow(`${esc(c.product_title)} &middot; qty ${esc(c.qty)}`, fmtIST(c.created_at)))
