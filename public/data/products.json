@@ -50,7 +50,7 @@
     "title": "Hand-Rolled Bridal Henna Cones (Non-Peel)",
     "category": "Henna Cones",
     "unit": "pc",
-    "ratePerUnit": 40,
+    "ratePerUnit": 30,
     "sizes": [1],
     "sizeLabels": { "1": "1 cone" },
     "defaultSize": 1,
@@ -63,14 +63,15 @@
       "images/products/bridal-cones-real.webp",
       "images/products/bridal-cones-stain.webp"
     ],
-    "description": "Ready-to-use, non-peel bridal mehendi cones, hand-rolled and filled fresh to order. Fine nozzle for clean, detailed linework. ₹40 per cone, order as many cones as you need."
+    "description": "Ready-to-use, non-peel bridal mehendi cones, hand-rolled and filled fresh to order. Fine nozzle for clean, detailed linework. ₹30 per cone, order as many cones as you need.",
+    "mrpPerUnit": 40
   },
   {
     "id": "nail-henna-cones",
     "title": "Nail Henna Cones (Fingers & Toes)",
     "category": "Henna Cones",
     "unit": "pc",
-    "ratePerUnit": 40,
+    "ratePerUnit": 30,
     "sizes": [1],
     "sizeLabels": { "1": "1 cone" },
     "defaultSize": 1,
@@ -78,7 +79,8 @@
     "packagingGrams": 25,
     "badges": ["New"],
     "images": ["images/products/nail-cones-floral.webp", "images/products/nail-cones-result.webp"],
-    "description": "Made only for fingernails and toenails. Each cone holds about 18-19 g of ready-to-use paste. For the best result, apply the paste 2 times. Not for skin designs. ₹40 per cone - order as many cones as you need."
+    "description": "Made only for fingernails and toenails. Each cone holds about 18-19 g of ready-to-use paste. For the best result, apply the paste 2 times. Not for skin designs. ₹30 per cone - order as many cones as you need.",
+    "mrpPerUnit": 40
   },
   {
     "id": "bridal-mehendi-paste-500g",
