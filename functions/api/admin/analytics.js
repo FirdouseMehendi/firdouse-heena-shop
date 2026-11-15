@@ -17,7 +17,16 @@ export async function onRequestGet({ env }) {
     ]),
   ]);
 
+  // Top visitor locations; empty until the 0003 migration is applied.
+  const locations = await env.DB.prepare(
+    `SELECT country, region, city, COUNT(*) AS n FROM site_visits
+     WHERE country IS NOT NULL GROUP BY country, region, city ORDER BY n DESC LIMIT 15`
+  )
+    .all()
+    .catch(() => ({ results: [] }));
+
   return json({
+    locations: locations.results,
     visits: visits.results,
     cartEvents: cartEvents.results,
     orders: orders.results.map((o) => ({ ...o, items: JSON.parse(o.items_json || "[]") })),

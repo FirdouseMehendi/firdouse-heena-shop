@@ -24,10 +24,19 @@ export async function onRequestPost({ request, env }) {
   const path = clean(payload?.path, 200) || "/";
   const referrer = clean(payload?.referrer, 300) || null;
 
-  await env.DB.prepare(`INSERT INTO site_visits (path, referrer) VALUES (?, ?)`)
-    .bind(path, referrer)
+  // Approximate location comes from Cloudflare's edge; the visitor's IP is never stored.
+  const cf = request.cf || {};
+  const country = clean(cf.country, 8) || null;
+  const region = clean(cf.region, 80) || null;
+  const city = clean(cf.city, 80) || null;
+
+  await env.DB.prepare(`INSERT INTO site_visits (path, referrer, country, region, city) VALUES (?, ?, ?, ?, ?)`)
+    .bind(path, referrer, country, region, city)
     .run()
-    .catch(() => {});
+    .catch(() =>
+      // Location columns not migrated yet: still record the visit.
+      env.DB.prepare(`INSERT INTO site_visits (path, referrer) VALUES (?, ?)`).bind(path, referrer).run().catch(() => {})
+    );
 
   return json({ ok: true });
 }

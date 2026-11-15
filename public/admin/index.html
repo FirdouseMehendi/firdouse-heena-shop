@@ -91,6 +91,10 @@
       <div id="cartList"></div>
     </div>
     <div class="analytics-section">
+      <h2>Where visitors are from</h2>
+      <div id="locationsList"></div>
+    </div>
+    <div class="analytics-section">
       <h2>Recent visits</h2>
       <div id="visitsList"></div>
     </div>
@@ -190,11 +194,25 @@
           .join("")
       : '<p class="admin-empty">No cart activity yet.</p>';
 
+    const place = (v) => [v.city, v.region, v.country].filter(Boolean).join(", ");
+
+    const locationsList = $("#locationsList");
+    const locations = data.locations || [];
+    locationsList.innerHTML = locations.length
+      ? locations.map((l) => fmtRow(esc(place(l)), `${esc(l.n)} visit${l.n === 1 ? "" : "s"}`)).join("")
+      : '<p class="admin-empty">No location data yet. It appears for new visits after the update.</p>';
+
     const visitsList = $("#visitsList");
     const visits = data.visits || [];
     visitsList.innerHTML = visits.length
       ? visits
-          .map((v) => fmtRow(esc(v.path), `${v.referrer ? esc(v.referrer) + " &middot; " : ""}${fmtIST(v.created_at)}`))
+          .map((v) => {
+            const where = place(v);
+            return fmtRow(
+              esc(v.path),
+              `${where ? esc(where) + " &middot; " : ""}${v.referrer ? esc(v.referrer) + " &middot; " : ""}${fmtIST(v.created_at)}`
+            );
+          })
           .join("")
       : '<p class="admin-empty">No visits logged yet.</p>';
   }
